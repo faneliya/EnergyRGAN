@@ -356,6 +356,7 @@ def convert_Wavelet(dataset, mode):
 
 
 def windDataFFTSave(startYmd, endYmd):
+    print(__name__)
     conn = db.connectMariaDB()
     startYmdStr = str(startYmd)
     endYmdStr = str(endYmd)
