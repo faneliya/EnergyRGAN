@@ -232,9 +232,9 @@ def plot_Fourier(dataset):
     plt.legend()
     plt.show()
 
-
+# dataframe to CSV Code and Analysis ------------------------------------------------------------------------
 def convert_Fourier(dataset, mode):
-
+    print('convert_Fourier:')
     # 숫자열로 인덱스 처리 0,1,2,.....
     dataset['row'] = dataset.reset_index().index # 인덱스를 읽어서 새로운 row 생성
     dataset.set_index('row', inplace=True) # row를 새로운 인덱스로 설정
@@ -276,6 +276,7 @@ def convert_Fourier(dataset, mode):
         modeName = 'Wind'
     else:
         modeName = 'Gen'
+
     saveFileName = 'result-i' + modeName + timeStr + '.csv'
     ifft_df.to_csv(saveFileName, sep=',', na_rep='NaN', index = True)
     # ifft_df.to_excel('result-i.xlsx', na_rep='NaN', index = True)
@@ -354,7 +355,7 @@ def convert_Wavelet(dataset, mode):
     plt.show()
     return 'test'
 
-
+# Basic Head Function for main call ---------------------------------------------------------------
 def windDataFFTSave(startYmd, endYmd):
     print(__name__)
     conn = db.connectMariaDB()
@@ -366,8 +367,9 @@ def windDataFFTSave(startYmd, endYmd):
               "AND REG_YMD BETWEEN '" + startYmdStr + "' AND '" + endYmdStr + "'"
     # date format coding check!
     dfResult = pd.read_sql(sqlWind, conn, parse_dates={'DATE_STAMP'}, index_col='DATE_STAMP')
-    # fft analysis
+    # fft analysis && Save ------------------------------------------------------------------------
     fileName = convert_Fourier(dfResult, 'Wind')
+    # fft analysis && Save ------------------------------------------------------------------------
     db.closeMariaDB(conn)
     return fileName
 

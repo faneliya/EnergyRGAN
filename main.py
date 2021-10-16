@@ -3,6 +3,8 @@ import DataPreProcessor
 import GRU_Model
 import GRUPredict
 
+import os
+import platform
 
 def show_Power_chart():
     # Use a breakpoint in the code line below to debug your script.
@@ -45,11 +47,21 @@ def decodeSolarDWT():
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
 
+    print('This is running on ' + os.name + 'at ' + platform.system())
+    # Setting For Test
+    initOpt = 1
     mode = 'Solar'
     savedFileExist = True
 
-    FFT = False
-    Wavelet = True
+    if initOpt is not None:
+        mode = 'Wind'
+        FFT = True
+        Wavelet = False
+        savedFileExist = False
+    else:
+        FFT = False
+        Wavelet = True
+
     # decodeWindFFT()
     if FFT:
         if savedFileExist:
