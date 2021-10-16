@@ -234,10 +234,14 @@ def plot_Fourier(dataset):
 
 
 def convert_Fourier(dataset, mode):
+
+    # 숫자열로 인덱스 처리 0,1,2,.....
     dataset['row'] = dataset.reset_index().index # 인덱스를 읽어서 새로운 row 생성
     dataset.set_index('row', inplace=True) # row를 새로운 인덱스로 설정
 
-    dataset.to_csv('origin.csv')
+    # 저장
+    # 턴dataset.to_csv('origin.csv')
+
     # FFT 처리
     data_power = dataset[['power']]
     data_FT = dataset[['power']]
@@ -264,6 +268,8 @@ def convert_Fourier(dataset, mode):
     ifft_df['row'] = dataset.reset_index().index # 인덱스를 읽어서 새로운 row 생성
     ifft_df.set_index('row', inplace=True) # row를 새로운 인덱스로 설정
     timeStr = str(datetime.today().strftime("%Y%m%d%H%M%S"))
+
+    # 파일명 정리해서 저장처리 금일날짜별
     if mode == 'Solar':
         modeName = 'Solar'
     elif mode == 'Wind':
@@ -274,6 +280,7 @@ def convert_Fourier(dataset, mode):
     ifft_df.to_csv(saveFileName, sep=',', na_rep='NaN', index = True)
     # ifft_df.to_excel('result-i.xlsx', na_rep='NaN', index = True)
 
+    # 그래프 표 표시 후 리
     plot_Fourier(dataset)
     return saveFileName
 

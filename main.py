@@ -15,7 +15,7 @@ def show_Power_chart():
     # windData = dataLoader.load_WindPower('20210501', '20210501')
     # return windData
 
-
+# From DB to Dataframe 4 Main API
 def decodeWindFFT():
     dataLoader.dataLoaderInit('>main.py/decodeWindFFT/Processing...')
     # dataLoader.dataLoad_WindPowerChart()
@@ -79,6 +79,7 @@ if __name__ == '__main__':
     num_y_signals = 0
     num_train = 0
 
+    # Save Data to CSV , Load np fo np format data return
     x_train_scaled, y_train_scaled, x_test_scaled, y_test_scaled,\
     num_x_signals, num_y_signals, num_train, xScaler, yScaler = DataPreProcessor.load_data(fileName)
 

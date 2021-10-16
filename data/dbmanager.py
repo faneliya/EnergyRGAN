@@ -1,12 +1,12 @@
 # 20210531 python-mariaDB connection
+# import mariadb as mariadb
 import mariadb as mariadb
 import sys
-
 
 # Connect to MariaDB Platform
 def connectMariaDB():
     try:
-        conn = mariadb.connect(
+        conn = mariadb.connection(
             user="admin",
             password="hist1984!FAB",
             host="mariadb-melchior.cmoghwh13bot.ap-northeast-2.rds.amazonaws.com",
