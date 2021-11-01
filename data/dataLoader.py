@@ -14,6 +14,21 @@ def dataLoaderInit(opt):
     print(opt)
 
 
+def dataLoadSQL(sqlText, fileName):
+    """
+    DATE 2021-11-01
+    DESC
+    """
+    if sqlText is not None and fileName is not None:
+        conn = db.connectMariaDB()
+        # date format coding check!
+        dataOut = pd.read_sql(sqlText, conn)
+        dataOut.to_csv(fileName)
+
+        db.closeMariaDB(conn)
+    return
+
+
 def dataLoad_WindPower():
     """
     DATE
