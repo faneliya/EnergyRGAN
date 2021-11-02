@@ -23,7 +23,7 @@ sqlText = "SELECT	CONCAT(WD.REG_YMD, WD.REG_HH24, WD.REG_MM) AS DATE," \
           "AND WD.REG_YMD = TD.REC_YMD	" \
           "AND WD.REG_YMD BETWEEN '20191101' AND '20210531' "
 
-# dl.dataLoadSQL(sqlText, "today.csv")
+dl.dataLoadSQL(sqlText, "today.csv")
 
 
 ## import data
