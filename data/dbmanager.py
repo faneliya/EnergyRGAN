@@ -6,7 +6,7 @@ import sys
 # Connect to MariaDB Platform
 def connectMariaDB():
     try:
-        conn = mariadb.connection(
+        conn = mariadb.connect(
             user="admin",
             password="hist1984!FAB",
             host="mariadb-melchior.cmoghwh13bot.ap-northeast-2.rds.amazonaws.com",

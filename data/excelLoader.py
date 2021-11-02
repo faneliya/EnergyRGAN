@@ -5,6 +5,7 @@ import data.dbmanager as db
 
 ELLIA_base_dir = 'C:/DEVEL/DEVEL_DATA/DataTest/EU_BG_EA_W'
 NREL_base_dir = 'C:/DEVEL/DEVEL_DATA/DataTest/EU_BG_EA_W'
+base_dir = 'C:/DEVEL/DEVEL_DATA/DataTest/EU_BG_EA_W'
 
 
 def load_excel_files_to_db():
@@ -14,6 +15,54 @@ def load_excel_files_to_db():
         if filename.endswith('.xls'):
             print(filename)
             read_data_from_excel(base_dir, filename)
+
+
+# weather data from world weather
+def read_weather_data_from_excel(base_dir, filename):
+    # set directory with yours
+    if not filename:
+        excel_file = 'TX_STAID000017.xlsx'
+    else:
+        excel_file = filename
+
+    excel_dir = os.path.join(base_dir, excel_file)
+
+    # read a excel file and make it as a DataFrame
+    df_from_excel = pd.read_excel(excel_dir,  # write your directory here
+                                  sheet_name='TX_STAID000017',
+                                  header=1,
+                                  usecols='A,B,C,D',
+                                  # names = ['region', 'sales_representative', 'sales_amount'],
+                                  # dtype={'Measured & upscaled [MW]': float,
+                                  #       'Monitored Capacity [MW]': float},
+                                  #index_col=0,
+                                  na_values='NaN',
+                                  thousands=',',
+                                  # nrows=10,
+                                  comment='#')
+
+    ndf = df_from_excel.to_numpy()
+
+    conn = db.connectMariaDB()
+    cursor = conn.cursor()
+
+    for i in range(ndf.shape[0]):
+        db_region_id = str(ndf[i][0])
+        db_ymd = str(ndf[i][1])
+        db_temp_max = str(round(ndf[i][2], 2))
+        db_data_qa = str(ndf[i][3])
+        insert_sql = 'INSERT INTO AST0301 ( REGION,  REC_YMD, TEMP_MAX, DATA_QA ) VALUES ( ' \
+                     + '\'' + db_region_id + '\', \'' \
+                     + db_ymd + '\',  \'' \
+                     + db_temp_max + '\', \'' \
+                     + db_data_qa + '\' )'
+        print(insert_sql)
+        cursor.execute(insert_sql)
+
+    conn.commit()
+    db.closeMariaDB(conn)
+
+    return df_from_excel
 
 
 def read_NREL_data_from_excel(base_dir, filename):
