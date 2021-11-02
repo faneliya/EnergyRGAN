@@ -23,11 +23,11 @@ sqlText = "SELECT	CONCAT(WD.REG_YMD, WD.REG_HH24, WD.REG_MM) AS DATE," \
           "AND WD.REG_YMD = TD.REC_YMD	" \
           "AND WD.REG_YMD BETWEEN '20191101' AND '20210531' "
 
-dl.dataLoadSQL(sqlText, "today.csv")
+# dl.dataLoadSQL(sqlText, "windData.csv")
 
 
 ## import data
-df = pd.read_csv('today.csv')
+df = pd.read_csv('windData.csv')
 print(df.head())
 print(df.tail())
 print(df.shape)
@@ -41,6 +41,7 @@ ax.set(xlabel="Date",
 #date_form = DateFormatter("%Y%m%d%H%M")
 #ax.xaxis.set_major_formatter(date_form)
 plt.show()
+
 
 def get_technical_indicators(data):
     # Create 7 and 21 days Moving Average
@@ -99,10 +100,8 @@ def get_fourier_transfer(dataset):
 
 dataset_F = get_fourier_transfer(dataset)
 Final_data = pd.concat([dataset, dataset_F], axis=1)
-
 print(Final_data.head())
-
-Final_data.to_csv("Fdata_with_Fourier.csv", index=False)
+Final_data.to_csv("WindData_with_Fourier.csv", index=False)
 
 
 def plot_technical_indicators(dataset, last_days):
@@ -120,7 +119,6 @@ def plot_technical_indicators(dataset, last_days):
     plt.title('WindPower Band'.format(last_days))
     plt.ylabel('Power MW')
     plt.legend()
-
     plt.legend()
     plt.show()
 

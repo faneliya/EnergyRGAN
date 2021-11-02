@@ -12,33 +12,43 @@ from sklearn.preprocessing import MinMaxScaler
 from pickle import dump
 
 # %% --------------------------------------- Load Data  -----------------------------------------------------------------
-dataset = pd.read_csv('Finaldata_with_Fourier.csv', parse_dates=['Date'])
-news = pd.read_csv("News.csv", parse_dates=["Date"])
+dataset = pd.read_csv('WindData_with_Fourier.csv', parse_dates=['DATE'])
+
+#뉴스 관련 로직제거
+#news = pd.read_csv("News.csv", parse_dates=["Date"])
 
 # %% --------------------------------------- Data Preprocessing  -----------------------------------------------------------------
 
 # Replace 0 by NA
 dataset.replace(0, np.nan, inplace=True)
 dataset.to_csv("dataset.csv", index=False)
-# Add News data
-dataset["News"] = news["Score"]
+# Add News data 제거함
+#dataset["News"] = news["Score"]
 
-# Check NA and fill them
 dataset.isnull().sum()
-dataset.iloc[:, 1:] = pd.concat([dataset.iloc[:, 1:].ffill(), dataset.iloc[:, 1:].bfill()]).groupby(level=0).mean()
 print(dataset.columns)
 
 # Set the date to datetime data
-datetime_series = pd.to_datetime(dataset['Date'])
+datetime_series = pd.to_datetime(dataset['DATE'])
 datetime_index = pd.DatetimeIndex(datetime_series.values)
 dataset = dataset.set_index(datetime_index)
-dataset = dataset.sort_values(by='Date')
-dataset = dataset.drop(columns='Date')
+dataset = dataset.sort_values(by='DATE')
+dataset = dataset.drop(columns='DATE')
+# 아래 항목은 데이터 처리중 불필요및 오류발생
+dataset = dataset.drop(columns='IDX')
+dataset = dataset.drop(columns='logmomentum')
 
+print(dataset.columns)
+# Check NA and fill them
+dataset.iloc[:, 0:] = pd.concat([dataset.iloc[:, 0:].ffill(), dataset.iloc[:, 1:].bfill()]).groupby(level=0).mean()
+
+print(dataset.head())
 # Get features and target
 X_value = pd.DataFrame(dataset.iloc[:, :])
-y_value = pd.DataFrame(dataset.iloc[:, 3])
+y_value = pd.DataFrame(dataset.iloc[:, 0])
 
+print(X_value)
+print(y_value)
 # Autocorrelation Check
 sm.graphics.tsa.plot_acf(y_value.squeeze(), lags=100)
 plt.show()
