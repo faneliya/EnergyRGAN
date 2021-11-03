@@ -21,9 +21,9 @@ sqlText = "SELECT	CONCAT(WD.REG_YMD, WD.REG_HH24, WD.REG_MM) AS DATE," \
           "FROM	AST0102 WD,	AST0301 TD " \
           "WHERE	1 = 1	" \
           "AND WD.REG_YMD = TD.REC_YMD	" \
-          "AND WD.REG_YMD BETWEEN '20191101' AND '20210531' "
+          "AND WD.REG_YMD BETWEEN '20191101' AND '20200201' "
 
-# dl.dataLoadSQL(sqlText, "windData.csv")
+#dl.dataLoadSQL(sqlText, "windData.csv")
 
 
 ## import data
