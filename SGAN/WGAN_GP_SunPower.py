@@ -222,7 +222,8 @@ test_predict_index = np.load("index_test.npy", allow_pickle=True)
 print("----- predicted price -----", Predicted_price)
 
 rescaled_Real_price = y_scaler.inverse_transform(Real_price)
-rescaled_Predicted_price = y_scaler.inverse_transform(Predicted_price)
+#rescaled_Predicted_price = y_scaler.inverse_transform(Predicted_price)
+rescaled_Predicted_price = Predicted_price
 
 print("----- rescaled predicted price -----", rescaled_Predicted_price)
 print("----- SHAPE rescaled predicted price -----", rescaled_Predicted_price.shape)

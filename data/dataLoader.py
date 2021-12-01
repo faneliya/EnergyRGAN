@@ -22,7 +22,9 @@ def dataLoadSQL(sqlText, fileName):
     if sqlText is not None and fileName is not None:
         conn = db.connectMariaDB()
         # date format coding check!
+        print(">Executing SQL")
         dataOut = pd.read_sql(sqlText, conn)
+        print(">Writing to File As " + fileName)
         dataOut.to_csv(fileName)
 
         db.closeMariaDB(conn)

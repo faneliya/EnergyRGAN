@@ -1,8 +1,6 @@
 import warnings
-
 import data.excelLoader as el
 import data.dataLoader as dl
-
 import os
 import numpy as np
 import csv
@@ -10,37 +8,136 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.dates import DateFormatter
 import math
-base_dir = 'C:/DEVEL/DEVEL_DATA/DataTest/belium_weather_max_temp_blend'
 
 #el.read_weather_data_from_excel(base_dir, None)
 
-sqlText = "SELECT	CONCAT(WD.REG_YMD, WD.REG_HH24, WD.REG_MM) AS DATE," \
+sqlTextWindBelgium = "SELECT	CONCAT(WD.REG_YMD, WD.REG_HH24, WD.REG_MM) AS DATE," \
           "	PW_P AS PW," \
           "	CAPACITY_MW AS CAPA," \
           "	TD.TEMP_MAX " \
           "FROM	AST0102 WD,	AST0301 TD " \
           "WHERE	1 = 1	" \
           "AND WD.REG_YMD = TD.REC_YMD	" \
-          "AND WD.REG_YMD BETWEEN '20191101' AND '20200201' "
+          "AND WD.REG_YMD BETWEEN '20180101' AND '20210401' "
 
-#dl.dataLoadSQL(sqlText, "windData.csv")
+sqlTextSolarBelgium = "SELECT	CONCAT(WD.REG_YMD, WD.REG_HH24, WD.REG_MM) AS DATE," \
+          "	PW_P AS PW," \
+          "	CAPACITY_MW AS CAPA," \
+          "	TD.TEMP_MAX " \
+          "FROM	AST0103 WD,	AST0301 TD " \
+          "WHERE	1 = 1	" \
+          "AND WD.REG_YMD = TD.REC_YMD	" \
+          "AND WD.REG_YMD BETWEEN '20180101' AND '20210401' "
+
+sqlTextSolar2 = "SELECT CONCAT(REG_YMD,REG_HH24,REG_MM) AS DATE," \
+             "           PW_P AS PW ," \
+             "           CAPACITY_MW AS CAPA" \
+             "          FROM AST0203" \
+             "          WHERE REG_YMD BETWEEN '20061101' AND '20070201' ;"
 
 
-## import data
-df = pd.read_csv('windData.csv')
-print(df.head())
-print(df.tail())
-print(df.shape)
-print(df.columns)
+base_dir="./DataFiles/"
 
-fig, ax = plt.subplots(figsize=(10,3))
-ax.plot(df[ 'IDX'], df['PW'], label='WIND_POWER')
-ax.set(xlabel="Date",
-       ylabel="MW",
-       title="WIND_POWER BELGIUM")
-#date_form = DateFormatter("%Y%m%d%H%M")
-#ax.xaxis.set_major_formatter(date_form)
-plt.show()
+
+def windDataFileExists():
+    result = False
+    file_list = os.listdir(base_dir)
+
+    for filename in file_list:
+        if filename.endswith('.csv'):
+            if filename == "WindData.csv":
+                result = True
+
+    return result
+
+
+def solarDataFileExists():
+    result = False
+    file_list = os.listdir(base_dir)
+
+    for filename in file_list:
+        if filename.endswith('.csv'):
+            if filename == "SolarData.csv":
+                result = True
+    return result
+
+
+# init funciton, DownaLoad DB
+def init():
+
+    if windDataFileExists() is False:
+        print(">Download Wind data From DB...")
+        dl.dataLoadSQL(sqlTextWindBelgium, base_dir + "WindData.csv")
+
+    if solarDataFileExists() is False:
+        print(">Download Solar data From DB...")
+        dl.dataLoadSQL(sqlTextSolarBelgium, base_dir + "SolarData.csv")
+
+
+def main():
+    ## import data
+    #df = pd.read_csv('windData.csv')
+    if windDataFileExists():
+        dfWind = pd.read_csv(base_dir + 'WindData.csv')
+
+        print(dfWind.head())
+        print(dfWind.tail())
+        print(dfWind.shape)
+        print(dfWind.columns)
+
+        fig, ax = plt.subplots(figsize=(10,3))
+        ax.plot(dfWind.index, dfWind['PW'], label='Wind Power')
+        # ax.plot(dfWind.index, dfWind['CAPA'], label='Power Mas')
+        # ax.plot(dfWind.index, dfWind['TEMP_MAX'], label='Temp Max')
+        ax.set(xlabel="Date",
+               ylabel="MW",
+               title="WIND PoWER BELGIUM")
+        #date_form = DateFormatter("%Y%m%d%H%M")
+        #ax.xaxis.set_major_formatter(date_form)
+        plt.show()
+
+        fftDataProcess(dfWind, base_dir+"WindDataFFT.csv")
+
+
+    if solarDataFileExists():
+        dfSolar = pd.read_csv(base_dir + 'SolarData.csv')
+
+        print(dfSolar.head())
+        print(dfSolar.tail())
+        print(dfSolar.shape)
+        print(dfSolar.columns)
+
+        fig, ax = plt.subplots(figsize=(10, 3))
+        ax.plot(dfSolar.index, dfSolar['PW'], label='Solar Power')
+        # ax.plot(dfSolar.index, dfSolar['CAPA'], label='Solar Power Max')
+        # ax.plot(dfSolar.index, dfSolar['TEMP_MAX'], label='Temp Max')
+        ax.set(xlabel="Date",
+               ylabel="MW",
+               title="Solar POWER BELGIUM")
+        # date_form = DateFormatter("%Y%m%d%H%M")
+        # ax.xaxis.set_major_formatter(date_form)
+        plt.show()
+
+        fftDataProcess(dfSolar, base_dir+"SolarDataFFT.csv")
+
+def fftDataProcess(df, filename):
+    warnings.filterwarnings(action='ignore')
+    T_df = get_technical_indicators(df)
+    warnings.filterwarnings(action='default')
+
+    dataset = T_df.iloc[20:, :].reset_index(drop=True)
+
+    dataset_F = get_fourier_transfer(dataset)
+    Final_data = pd.concat([dataset, dataset_F], axis=1)
+    print(Final_data.head())
+#    Final_data.to_csv("WindData_with_Fourier.csv", index=False)
+    Final_data.to_csv(filename, index=False)
+
+    plot_technical_indicators(T_df, 5000)
+
+    warnings.filterwarnings(action='ignore')
+    plot_Fourier(dataset)
+    warnings.filterwarnings(action='default')
 
 
 def get_technical_indicators(data):
@@ -65,16 +162,11 @@ def get_technical_indicators(data):
     return data
 
 
-warnings.filterwarnings(action='ignore')
-T_df = get_technical_indicators(df)
-warnings.filterwarnings(action='default')
-
-dataset = T_df.iloc[20:,:].reset_index(drop=True)
-
-
 def get_fourier_transfer(dataset):
     # Get the columns for doing fourier
-    data_FT = dataset[['IDX', 'PW']]
+    #data_FT = dataset[['IDX', 'PW']]
+    dataset["IDX"] = dataset.index
+    data_FT = dataset[["IDX", 'PW']]
 
     pw_fft = np.fft.fft(np.asarray(data_FT['PW'].tolist()))
     fft_df = pd.DataFrame({'fft': pw_fft})
@@ -94,14 +186,7 @@ def get_fourier_transfer(dataset):
         fft_com['angle of ' + str(num_) + ' comp'] = fft_com['fft'].apply(lambda x: np.angle(x))
         fft_com = fft_com.drop(columns='fft')
         fft_com_df = pd.concat([fft_com_df, fft_com], axis=1)
-
     return fft_com_df
-
-
-dataset_F = get_fourier_transfer(dataset)
-Final_data = pd.concat([dataset, dataset_F], axis=1)
-print(Final_data.head())
-Final_data.to_csv("WindData_with_Fourier.csv", index=False)
 
 
 def plot_technical_indicators(dataset, last_days):
@@ -116,14 +201,11 @@ def plot_technical_indicators(dataset, last_days):
     plt.plot(dataset['upper_band'], label='Upper Band', color='c')
     plt.plot(dataset['lower_band'], label='Lower Band', color='c')
     plt.fill_between(x_, dataset['lower_band'], dataset['upper_band'], alpha=0.35)
-    plt.title('WindPower Band'.format(last_days))
+    plt.title('Power Band'.format(last_days))
     plt.ylabel('Power MW')
     plt.legend()
     plt.legend()
     plt.show()
-
-
-plot_technical_indicators(T_df, 5000)
 
 
 def plot_Fourier(dataset):
@@ -145,13 +227,12 @@ def plot_Fourier(dataset):
     # plt.plot(data_FT['PW'], label='Real')
     plt.xlabel('TIC')
     plt.ylabel('MW')
-    plt.title('WIND POWER Fourier transforms')
+    plt.title('POWER Fourier transforms')
     plt.legend()
     plt.show()
 
-
-warnings.filterwarnings(action='ignore')
-plot_Fourier(dataset)
-warnings.filterwarnings(action='default')
-
-
+# 프로그램 시작처리
+if __name__ == '__main__':
+    print('################ LoadData To CSV #########################')
+    init()
+    main()

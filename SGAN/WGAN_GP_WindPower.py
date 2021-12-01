@@ -11,12 +11,12 @@ from tensorflow.keras import Sequential, regularizers
 from tensorflow.python.client import device_lib
 
 # Load data
-X_train = np.load("X_train.npy", allow_pickle=True)
-y_train = np.load("y_train.npy", allow_pickle=True)
-X_test = np.load("X_test.npy", allow_pickle=True)
-y_test = np.load("y_test.npy", allow_pickle=True)
-yc_train = np.load("yc_train.npy", allow_pickle=True)
-yc_test = np.load("yc_test.npy", allow_pickle=True)
+X_train = np.load("X_train_WindPower.npy", allow_pickle=True)
+y_train = np.load("y_train_WindPower.npy", allow_pickle=True)
+X_test = np.load("X_test_WindPower.npy", allow_pickle=True)
+y_test = np.load("y_test_WindPower.npy", allow_pickle=True)
+yc_train = np.load("yc_train_WindPower.npy", allow_pickle=True)
+yc_test = np.load("yc_test_WindPower.npy", allow_pickle=True)
 
 # Define the generator
 def Generator(input_dim, output_dim, feature_size) -> tf.keras.models.Model:
@@ -62,7 +62,7 @@ class GAN():
         self.generator = generator
         self.discriminator = discriminator
         self.batch_size = 128
-        checkpoint_dir = '../training_checkpoints'
+        checkpoint_dir = './WGAN_training_checkpoints'
         self.checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt")
         self.checkpoint = tf.train.Checkpoint(generator_optimizer=self.g_optimizer,
                                               discriminator_optimizer=self.d_optimizer,
@@ -214,15 +214,16 @@ if __name__ == '__main__':
 # %% --------------------------------------- Plot the result -----------------------------------------------------
 
 # Rescale back the real dataset
-X_scaler = load(open('X_scaler.pkl', 'rb'))
-y_scaler = load(open('y_scaler.pkl', 'rb'))
-train_predict_index = np.load("index_train.npy", allow_pickle=True)
-test_predict_index = np.load("index_test.npy", allow_pickle=True)
+X_scaler = load(open('X_scaler_WindPower.pkl', 'rb'))
+y_scaler = load(open('y_scaler_WindPower.pkl', 'rb'))
+train_predict_index = np.load("index_train_WindPower.npy", allow_pickle=True)
+test_predict_index = np.load("index_test_WindPower.npy", allow_pickle=True)
 
 print("----- predicted price -----", Predicted_price)
 
 rescaled_Real_price = y_scaler.inverse_transform(Real_price)
 rescaled_Predicted_price = y_scaler.inverse_transform(Predicted_price)
+#rescaled_Predicted_price = Predicted_price
 
 print("----- rescaled predicted price -----", rescaled_Predicted_price)
 print("----- SHAPE rescaled predicted price -----", rescaled_Predicted_price.shape)
