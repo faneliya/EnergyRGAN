@@ -18,7 +18,19 @@ sqlTextWindBelgium = "SELECT	CONCAT(WD.REG_YMD, WD.REG_HH24, WD.REG_MM) AS DATE,
           "FROM	AST0102 WD,	AST0301 TD " \
           "WHERE	1 = 1	" \
           "AND WD.REG_YMD = TD.REC_YMD	" \
-          "AND WD.REG_YMD BETWEEN '20180101' AND '20210401' "
+          "AND WD.REG_YMD BETWEEN '20160101' AND '20210401' "
+
+
+sqlTextWindBelgiumAll = "SELECT	TIME_ID AS DATE," \
+          "	WIND_PW AS PW," \
+          "	WIND_PW_CAPA AS CAPA," \
+          "	TEMP_MAX, " \
+          "	TEMP_MIN, " \
+          "	RADIATION " \
+          "FROM	AST0401 " \
+          "WHERE	1 = 1	" \
+          "AND TIME_ID BETWEEN '20160101' AND '20210401' "
+
 
 sqlTextSolarBelgium = "SELECT	CONCAT(WD.REG_YMD, WD.REG_HH24, WD.REG_MM) AS DATE," \
           "	PW_P AS PW," \
@@ -27,7 +39,34 @@ sqlTextSolarBelgium = "SELECT	CONCAT(WD.REG_YMD, WD.REG_HH24, WD.REG_MM) AS DATE
           "FROM	AST0103 WD,	AST0301 TD " \
           "WHERE	1 = 1	" \
           "AND WD.REG_YMD = TD.REC_YMD	" \
-          "AND WD.REG_YMD BETWEEN '20180101' AND '20210401' "
+          "AND WD.REG_YMD BETWEEN '20160101' AND '20210401' "
+
+
+sqlTextSolarBelgiumAll = "SELECT TIME_ID AS DATE," \
+          "	SOLAR_PW AS PW," \
+          "	SOLAR_PW_CAPA AS CAPA," \
+          "	TEMP_MAX, " \
+          "	TEMP_MIN, " \
+          "	RADIATION " \
+          "FROM	AST0401 " \
+          "WHERE	1 = 1	" \
+          "AND TIME_ID BETWEEN '20160101' AND '20210401' "
+
+
+sqlTextBelgiumEnergyAll = "SELECT TIME_ID AS DATE," \
+          "	SOLAR_PW + WIND_PW AS PW," \
+          "	SOLAR_PW_CAPA + WIND_PW_CAPA AS CAPA," \
+          "	SOLAR_PW AS SOLAR_PW," \
+          "	SOLAR_PW_CAPA AS SOLAR_CAPA," \
+          "	WIND_PW AS WIND_PW," \
+          "	WIND_PW_CAPA AS WIND_CAPA," \
+          "	TEMP_MAX, " \
+          "	TEMP_MIN, " \
+          "	RADIATION " \
+          "FROM	AST0401 " \
+          "WHERE	1 = 1	" \
+          "AND TIME_ID BETWEEN '20160101' AND '20210401' "
+
 
 sqlTextSolar2 = "SELECT CONCAT(REG_YMD,REG_HH24,REG_MM) AS DATE," \
              "           PW_P AS PW ," \
@@ -37,6 +76,17 @@ sqlTextSolar2 = "SELECT CONCAT(REG_YMD,REG_HH24,REG_MM) AS DATE," \
 
 
 base_dir="./DataFiles/"
+
+
+def dataFileExists(target):
+    result = False
+    file_list = os.listdir(base_dir)
+
+    for filename in file_list:
+        if filename.endswith('.csv'):
+            if filename == target:
+                result = True
+    return result
 
 
 def windDataFileExists():
@@ -69,9 +119,21 @@ def init():
         print(">Download Wind data From DB...")
         dl.dataLoadSQL(sqlTextWindBelgium, base_dir + "WindData.csv")
 
+    if dataFileExists("WindAllData") is False:
+        print(">Download Wind data From Wind All DB...")
+        dl.dataLoadSQL(sqlTextWindBelgiumAll, base_dir + "WindAllData.csv")
+
     if solarDataFileExists() is False:
         print(">Download Solar data From DB...")
         dl.dataLoadSQL(sqlTextSolarBelgium, base_dir + "SolarData.csv")
+
+    if dataFileExists("SolarAllData.csv") is False:
+        print(">Download Wind data From Solar All DB...")
+        dl.dataLoadSQL(sqlTextSolarBelgium, base_dir + "SolarAllData.csv")
+
+    if dataFileExists("BelgiumAllData.csv") is False:
+        print(">Download Wind data From Belgium Energy All DB...")
+        dl.dataLoadSQL(sqlTextBelgiumEnergyAll, base_dir + "BelgiumAllData.csv")
 
 
 def main():
@@ -119,6 +181,29 @@ def main():
         plt.show()
 
         fftDataProcess(dfSolar, base_dir+"SolarDataFFT.csv")
+
+    if dataFileExists("BelgiumAllData.csv"):
+        dfSolar = pd.read_csv(base_dir + 'BelgiumAllData.csv')
+
+        print(dfSolar.head())
+        print(dfSolar.tail())
+        print(dfSolar.shape)
+        print(dfSolar.columns)
+
+        fig, ax = plt.subplots(figsize=(10, 3))
+        ax.plot(dfSolar.index, dfSolar['PW'], label='Solar+Wind Power')
+        # ax.plot(dfSolar.index, dfSolar['CAPA'], label='Solar Power Max')
+        # ax.plot(dfSolar.index, dfSolar['TEMP_MAX'], label='Temp Max')
+        ax.set(xlabel="Date",
+               ylabel="MW",
+               title="Solar+Wind POWER BELGIUM")
+        # date_form = DateFormatter("%Y%m%d%H%M")
+        # ax.xaxis.set_major_formatter(date_form)
+        plt.show()
+
+        fftDataProcess(dfSolar, base_dir+"BelgiumAllDataFFT.csv")
+
+
 
 def fftDataProcess(df, filename):
     warnings.filterwarnings(action='ignore')
