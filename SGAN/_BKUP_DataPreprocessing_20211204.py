@@ -27,7 +27,14 @@ def dataProcess(filePreFixName):
 
     # %% - Load Data  -----------------------------------------------------------------
     dataset = pd.read_csv(DataFilesDir + preFix + "DataFFT.csv", parse_dates=['DATE'])
-    #dataset.replace(0, np.nan, inplace=True)
+    #뉴스 관련 로직제거
+    #news = pd.read_csv("News.csv", parse_dates=["Date"])
+    # %% - Data Preprocessing  -----------------------------------------------------------------
+    # Replace 0 by NA
+    dataset.replace(0, np.nan, inplace=True)
+    #dataset.to_csv("tmpWindDataset.csv", index=False)
+    # Add News data 제거함
+    #dataset["News"] = news["Score"]
     dataset.isnull().sum()
 
     print(dataset.columns)
@@ -37,18 +44,18 @@ def dataProcess(filePreFixName):
     dataset = dataset.set_index(datetime_index)
     dataset = dataset.sort_values(by='DATE')
     dataset = dataset.drop(columns='DATE')
-
     # 아래 항목은 데이터 처리중 불필요및 오류발생
     dataset = dataset.drop(columns='IDX')
     dataset = dataset.drop(columns='logmomentum')
 
     print(dataset.columns)
     # Check NA and fill them
-    dataset.iloc[:, 1:] = pd.concat([dataset.iloc[:, 1:].ffill(), dataset.iloc[:, 1:].bfill()]).groupby(level=0).mean()
+    dataset.iloc[:, 0:] = pd.concat([dataset.iloc[:, 0:].ffill(), dataset.iloc[:, 1:].bfill()]).groupby(level=0).mean()
 
+    print(dataset.head())
     # Get features and target
-    X_value = pd.DataFrame(dataset.iloc[:, :]) # 모든 열
-    y_value = pd.DataFrame(dataset.iloc[:, 0]) # 목포값 첫번째 열
+    X_value = pd.DataFrame(dataset.iloc[:, :])
+    y_value = pd.DataFrame(dataset.iloc[:, 0])
 
     print(X_value)
     print(y_value)
@@ -76,14 +83,12 @@ def dataProcess(filePreFixName):
     n_features = X_value.shape[1]
     n_steps_out = 1
 
-    # Get data and check shape ##################################################
+    # Get data and check shape
     X, y, yc = get_X_y(X_scale_dataset, y_scale_dataset, n_steps_in, n_steps_out)
-    # ###########################################################################
     X_train, X_test, = split_train_test(X,X)
     y_train, y_test, = split_train_test(y,X)
     yc_train, yc_test, = split_train_test(yc,X)
     index_train, index_test, = predict_index(dataset, X_train, n_steps_in, n_steps_out)
-
     # %% - Save dataset -----------------------------------------------------------------
     print('X shape: ', X.shape)
     print('y shape: ', y.shape)

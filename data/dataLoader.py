@@ -14,7 +14,7 @@ def dataLoaderInit(opt):
     print(opt)
 
 
-def dataLoadSQL(sqlText, fileName):
+def dataLoadSQL(sqlText, fileName, indexSet):
     """
     DATE 2021-11-01
     DESC
@@ -25,8 +25,10 @@ def dataLoadSQL(sqlText, fileName):
         print(">Executing SQL")
         dataOut = pd.read_sql(sqlText, conn)
         print(">Writing to File As " + fileName)
-        dataOut.to_csv(fileName)
-
+        if indexSet is None:
+            dataOut.to_csv(fileName, index=True)
+        else:
+            dataOut.to_csv(fileName, index=indexSet)
         db.closeMariaDB(conn)
     return
 
