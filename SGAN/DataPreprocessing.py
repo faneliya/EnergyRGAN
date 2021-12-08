@@ -13,7 +13,8 @@ from pickle import dump
 
 DataFilesDir="./DataFiles/"
 ProcessedFilesDir="./ProcessedFiles/"
-
+STD_BASE_TIME_TIC = 2880
+STD_TARGET_TIME_TIC = 96
 
 def dataProcess(filePreFixName):
     if filePreFixName is None:
@@ -29,7 +30,6 @@ def dataProcess(filePreFixName):
     dataset = pd.read_csv(DataFilesDir + preFix + "DataFFT.csv", parse_dates=['DATE'])
     #dataset.replace(0, np.nan, inplace=True)
     dataset.isnull().sum()
-
     print(dataset.columns)
     # Set the date to datetime data
     datetime_series = pd.to_datetime(dataset['DATE'])
@@ -39,45 +39,47 @@ def dataProcess(filePreFixName):
     dataset = dataset.drop(columns='DATE')
 
     # 아래 항목은 데이터 처리중 불필요및 오류발생
-    dataset = dataset.drop(columns='IDX')
+    # dataset = dataset.drop(columns='IDX')
     dataset = dataset.drop(columns='logmomentum')
 
     print(dataset.columns)
     # Check NA and fill them
-    dataset.iloc[:, 1:] = pd.concat([dataset.iloc[:, 1:].ffill(), dataset.iloc[:, 1:].bfill()]).groupby(level=0).mean()
-
+    dataset.iloc[:, 0:] = pd.concat([dataset.iloc[:, 0:].ffill(), dataset.iloc[:, 0:].bfill()]).groupby(level=0).mean()
     # Get features and target
-    X_value = pd.DataFrame(dataset.iloc[:, :]) # 모든 열
-    y_value = pd.DataFrame(dataset.iloc[:, 0]) # 목포값 첫번째 열
+    BaseValue = pd.DataFrame(dataset.iloc[:, :]) # 모든 열
+    TargetValue = pd.DataFrame(dataset.iloc[:, 0]) # 목포값 첫번째 열
 
-    print(X_value)
-    print(y_value)
+    print(BaseValue)
+    print(TargetValue)
     # Autocorrelation Check
-    sm.graphics.tsa.plot_acf(y_value.squeeze(), lags=100)
+    sm.graphics.tsa.plot_acf(TargetValue.squeeze(), lags=100)
     plt.show()
 
     # Normalized the data
-    X_scaler = MinMaxScaler(feature_range=(-1, 1))
-    y_scaler = MinMaxScaler(feature_range=(-1, 1))
-    X_scaler.fit(X_value)
-    y_scaler.fit(y_value)
+    BaseValueScaler = MinMaxScaler(feature_range=(-1000, 1000))
+    TargetValueScaler = MinMaxScaler(feature_range=(-1000, 1000))
+    BaseValueScaler.fit(BaseValue)
+    TargetValueScaler.fit(TargetValue)
 
-    X_scale_dataset = X_scaler.fit_transform(X_value)
-    y_scale_dataset = y_scaler.fit_transform(y_value)
+    BaseScaleDataset = BaseValueScaler.fit_transform(BaseValue)
+    TargetScaleDataset = TargetValueScaler.fit_transform(TargetValue)
 
-    dump(X_scaler, open(ProcessedFilesDir+ preFix+'X_scaler.pkl', 'wb'))
-    dump(y_scaler, open(ProcessedFilesDir+ preFix+'y_scaler.pkl', 'wb'))
+    dump(BaseValueScaler, open(ProcessedFilesDir+ preFix+'BaseValueScaler.pkl', 'wb'))
+    dump(TargetValueScaler, open(ProcessedFilesDir+ preFix+'TargetValueScaler.pkl', 'wb'))
 
     # Reshape the data
     '''Set the data input steps and output steps, 
         we use 30 days data to predict 1 day price here, 
         reshape it to (None, input_step, number of features) used for LSTM input'''
-    n_steps_in = 3
-    n_features = X_value.shape[1]
-    n_steps_out = 1
+    # 4 x 24 x 30 = 2880
+    # 4 x 24 = 96
+
+    n_steps_in = STD_BASE_TIME_TIC
+    # n_features = BaseValue.shape[1]
+    n_steps_out = STD_TARGET_TIME_TIC
 
     # Get data and check shape ##################################################
-    X, y, yc = get_X_y(X_scale_dataset, y_scale_dataset, n_steps_in, n_steps_out)
+    X, y, yc = getDataSlide(BaseScaleDataset, TargetScaleDataset, n_steps_in, n_steps_out)
     # ###########################################################################
     X_train, X_test, = split_train_test(X,X)
     y_train, y_test, = split_train_test(y,X)
@@ -109,19 +111,25 @@ def dataProcess(filePreFixName):
 
 
 # Get X/y dataset
-def get_X_y(X_data, y_data, n_steps_in, n_steps_out):
+def getDataSlide(X_data, y_data, n_steps_in, n_steps_out):
     X = list()
     y = list()
     yc = list()
     length = len(X_data)
+    print("> Total Data Size(Row)  =" + str(length))
     for i in range(0, length, 1):
-        X_value = X_data[i: i + n_steps_in][:, :]
-        y_value = y_data[i + n_steps_in: i + (n_steps_in + n_steps_out)][:, 0]
-        yc_value = y_data[i: i + n_steps_in][:, :]
-        if len(X_value) == 3 and len(y_value) == 1:
-            X.append(X_value)
-            y.append(y_value)
-            yc.append(yc_value)
+        # print(i)
+        BaseValue = X_data[i: i + n_steps_in][:, :]
+        TargetValue = y_data[i + n_steps_in: i + (n_steps_in + n_steps_out)][:, 0]
+        TargetAllValue = y_data[i: i + n_steps_in][:, :]
+        #print(BaseValue)
+        #print(TargetValue)
+        #print(len(BaseValue))
+        #print(len(TargetValue))
+        if len(BaseValue) == STD_BASE_TIME_TIC and len(TargetValue) == STD_TARGET_TIME_TIC:
+            X.append(BaseValue)
+            y.append(TargetValue)
+            yc.append(TargetAllValue)
 
     return np.array(X), np.array(y), np.array(yc)
 
@@ -146,5 +154,5 @@ def split_train_test(data, X):
 # 프로그램 시작처리
 if __name__ == '__main__':
     print('################ Data PreProcessing #########################')
-    dataProcess("Solar")
+    #dataProcess("Solar")
     dataProcess("Wind")

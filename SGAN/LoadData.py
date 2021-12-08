@@ -1,9 +1,5 @@
 import warnings
-
 import pywt
-
-import data.excelLoader as el
-import data.dataLoader as dl
 import os
 import numpy as np
 import csv
@@ -11,6 +7,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.dates import DateFormatter
 import math
+
+import data.dataLoader as dl
+import SGAN.SQL.sqlList as sqlList
 
 #el.read_weather_data_from_excel(base_dir, None)
 
@@ -20,7 +19,7 @@ sqlTextWindBelgium = "SELECT SUBSTR(TIME_ID,1,12) AS DATE," \
           "	TEMP_MAX " \
           "FROM	AST0401 " \
           "WHERE	1 = 1	" \
-          "AND TIME_ID BETWEEN '20160101' AND '20210401' "
+          "AND TIME_ID BETWEEN '20190101' AND '20210401' "
 
 
 sqlTextWindBelgiumAll = "SELECT	SUBSTR(TIME_ID,1,12) AS DATE," \
@@ -31,7 +30,7 @@ sqlTextWindBelgiumAll = "SELECT	SUBSTR(TIME_ID,1,12) AS DATE," \
           "	RADIATION " \
           "FROM	AST0401 " \
           "WHERE	1 = 1	" \
-          "AND TIME_ID BETWEEN '20160101' AND '20210401' "
+          "AND TIME_ID BETWEEN '20190101' AND '20210401' "
 
 sqlTextSolarBelgium = "SELECT SUBSTR(TIME_ID,1,12) AS DATE," \
           "	SOLAR_PW AS PW," \
@@ -39,7 +38,7 @@ sqlTextSolarBelgium = "SELECT SUBSTR(TIME_ID,1,12) AS DATE," \
           "	TEMP_MAX " \
           "FROM	AST0401 " \
           "WHERE	1 = 1	" \
-          "AND TIME_ID BETWEEN '20160101' AND '20210401' "
+          "AND TIME_ID BETWEEN '20190101' AND '20210401' "
 
 
 sqlTextSolarBelgiumAll = "SELECT SUBSTR(TIME_ID,1,12) AS DATE," \
@@ -50,7 +49,7 @@ sqlTextSolarBelgiumAll = "SELECT SUBSTR(TIME_ID,1,12) AS DATE," \
           "	RADIATION " \
           "FROM	AST0401 " \
           "WHERE	1 = 1	" \
-          "AND TIME_ID BETWEEN '20160101' AND '20210401' "
+          "AND TIME_ID BETWEEN '20190101' AND '20210401' "
 
 
 sqlTextBelgiumEnergyAll = "SELECT SUBSTR(TIME_ID,1,12) AS DATE," \
@@ -65,14 +64,7 @@ sqlTextBelgiumEnergyAll = "SELECT SUBSTR(TIME_ID,1,12) AS DATE," \
           "	RADIATION " \
           "FROM	AST0401 " \
           "WHERE	1 = 1	" \
-          "AND TIME_ID BETWEEN '20160101' AND '20210401' "
-
-
-sqlTextSolar2 = "SELECT CONCAT(REG_YMD,REG_HH24,REG_MM) AS DATE," \
-             "           PW_P AS PW ," \
-             "           CAPACITY_MW AS CAPA" \
-             "          FROM AST0203" \
-             "          WHERE REG_YMD BETWEEN '20061101' AND '20070201' ;"
+          "AND TIME_ID BETWEEN '20190101' AND '20210401' "
 
 
 base_dir="./DataFiles/"
@@ -122,6 +114,27 @@ def init():
     if dataFileExists("WindAllData.csv") is False:
         print(">Download Wind data From Wind All DB...")
         dl.dataLoadSQL(sqlTextWindBelgiumAll, base_dir + "WindAllData.csv", indexSet=False)
+
+    if dataFileExists("WindAllDataM3.csv") is False:
+        print(">Download Wind data From Wind All DB...")
+        dl.dataLoadSQL(sqlList.sqlTextWindBelgiumAllM3, base_dir + "WindAllDataM3.csv", indexSet=False)
+
+    if dataFileExists("WindAllDataM6.csv") is False:
+        print(">Download Wind data From Wind All DB...")
+        dl.dataLoadSQL(sqlList.sqlTextWindBelgiumAllM6, base_dir + "WindAllDataM6.csv", indexSet=False)
+
+    if dataFileExists("WindAllDataY1.csv") is False:
+        print(">Download Wind data From Wind All DB...")
+        dl.dataLoadSQL(sqlList.sqlTextWindBelgiumAllY1, base_dir + "WindAllDataY1.csv", indexSet=False)
+
+    if dataFileExists("WindAllDataY2.csv") is False:
+        print(">Download Wind data From Wind All DB...")
+        dl.dataLoadSQL(sqlList.sqlTextWindBelgiumAllY2, base_dir + "WindAllDataY2.csv", indexSet=False)
+
+    if dataFileExists("WindAllDataY5.csv") is False:
+        print(">Download Wind data From Wind All DB...")
+        dl.dataLoadSQL(sqlList.sqlTextWindBelgiumAllY5, base_dir + "WindAllDataY5.csv", indexSet=False)
+
 
     if solarDataFileExists() is False:
         print(">Download Solar data From DB...")
