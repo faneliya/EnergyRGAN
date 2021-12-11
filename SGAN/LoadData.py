@@ -49,7 +49,6 @@ def solarDataFileExists():
                 result = True
     return result
 
-
 # init funciton, DownaLoad DB
 def init():
 
