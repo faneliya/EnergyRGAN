@@ -23,10 +23,8 @@ ProcessedFilesDir="./ProcessedFiles/"
 ModelFileDir="./ModelSaves/"
 
 ######################################################################################################################
-TrainCaseName = 'SolarAllDataM3FFT'
+
 TrainCaseName = 'SolarAllDataM3FFT_DWT'
-TrainCaseName = 'WindAllDataM3FFT_DWT'
-TrainCaseName = 'WindAllDataM3FFT_DWT'
 
 
 # Parameters

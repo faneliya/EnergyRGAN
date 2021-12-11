@@ -140,7 +140,20 @@ sqlTextBelgiumEnergyAll = "SELECT SUBSTR(TIME_ID,1,12) AS DATE," \
           "	RADIATION " \
           "FROM	AST0401 " \
           "WHERE	1 = 1	" \
-          "AND TIME_ID BETWEEN '20190101' AND '20210401' "
+          "AND TIME_ID BETWEEN '20160101' AND '20210401' "
 
 
+sqlTextBelgiumEnergyAllM3 = "SELECT SUBSTR(TIME_ID,1,12) AS DATE," \
+          "	SOLAR_PW + WIND_PW AS PW," \
+          "	SOLAR_PW_CAPA + WIND_PW_CAPA AS CAPA," \
+          "	SOLAR_PW AS SOLAR_PW," \
+          "	SOLAR_PW_CAPA AS SOLAR_CAPA," \
+          "	WIND_PW AS WIND_PW," \
+          "	WIND_PW_CAPA AS WIND_CAPA," \
+          "	TEMP_MAX, " \
+          "	TEMP_MIN, " \
+          "	RADIATION " \
+          "FROM	AST0401 " \
+          "WHERE	1 = 1	" \
+          "AND TIME_ID BETWEEN '20210101' AND '20210401' "
 

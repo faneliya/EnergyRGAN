@@ -58,8 +58,8 @@ def basic_GRU(input_dim, output_dim, feature_size) -> tf.keras.models.Model:
     return model
 
 
-model = basic_GRU(input_dim, output_dim, feature_size)
-print(model.summary())
+#model = basic_GRU(input_dim, output_dim, feature_size)
+#print(model.summary())
 #model.save('GRU_30to3.h5')
 model = tensorflow.keras.models.load_model('GRU_30to3.h5')
 

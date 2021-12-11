@@ -13,8 +13,8 @@ from pickle import dump
 
 DataFilesDir="./DataFiles/"
 ProcessedFilesDir="./ProcessedFiles/"
-STD_BASE_TIME_TIC = 2880
-STD_TARGET_TIME_TIC = 96
+STD_BASE_TIME_TIC = 240
+STD_TARGET_TIME_TIC = 8
 
 
 def dataProcessByFile(fileName):
@@ -51,8 +51,8 @@ def dataProcessByFile(fileName):
     plt.show()
 
     # Normalized the data
-    BaseValueScaler = MinMaxScaler(feature_range=(-1000, 1000))
-    TargetValueScaler = MinMaxScaler(feature_range=(-1000, 1000))
+    BaseValueScaler = MinMaxScaler(feature_range=(-1, 1))
+    TargetValueScaler = MinMaxScaler(feature_range=(-1, 1))
     BaseValueScaler.fit(BaseValue)
     TargetValueScaler.fit(TargetValue)
 
@@ -146,8 +146,8 @@ def dataProcess(filePreFixName):
     plt.show()
 
     # Normalized the data
-    BaseValueScaler = MinMaxScaler(feature_range=(-1000, 1000))
-    TargetValueScaler = MinMaxScaler(feature_range=(-1000, 1000))
+    BaseValueScaler = MinMaxScaler(feature_range=(-10, 10))
+    TargetValueScaler = MinMaxScaler(feature_range=(-10, 10))
     BaseValueScaler.fit(BaseValue)
     TargetValueScaler.fit(TargetValue)
 
@@ -223,6 +223,7 @@ def getDataSlide(X_data, y_data, n_steps_in, n_steps_out):
 
     return np.array(X), np.array(y), np.array(yc)
 
+
 # get the train test predict index
 def predict_index(dataset, X_train, n_steps_in, n_steps_out):
 
@@ -247,11 +248,14 @@ if __name__ == '__main__':
     #dataProcess("Solar")
     #dataProcess("Wind")
     #dataProcessByFile("BelgiumAllDataFFT.csv")
-    dataProcessByFile("SolarAllDataM3FFT.csv")
-    dataProcessByFile("SolarAllDataM3FFT_DWT.csv")
-    dataProcessByFile("WindAllDataM3FFT.csv")
-    dataProcessByFile("WindAllDataM3FFT_DWT.csv")
+    #dataProcessByFile("SolarAllDataM3FFT.csv")
+    #dataProcessByFile("SolarAllDataM3FFT_DWT.csv")
+    #dataProcessByFile("WindAllDataM3FFT.csv")
+    #dataProcessByFile("WindAllDataM3FFT_DWT.csv")
 
+    dataProcessByFile("BelgiumAllDataM3FFT.csv")
+    dataProcessByFile("BelgiumAllDataM3FFT_DWT.csv")
+'''
     dataProcessByFile("SolarAllDataM6FFT.csv")
     dataProcessByFile("SolarAllDataM6FFT_DWT.csv")
     dataProcessByFile("WindAllDataM6FFT.csv")
@@ -274,3 +278,4 @@ if __name__ == '__main__':
 
     dataProcessByFile("BelgiumAllDataFFT.csv")
     dataProcessByFile("BelgiumAllDataFFT_DWT.csv")
+'''
