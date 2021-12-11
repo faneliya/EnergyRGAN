@@ -1,48 +1,54 @@
 
-
-
-sqlTextWindBelgium3M = "SELECT SUBSTR(TIME_ID,1,12) AS DATE," \
+sqlTextWindBelgium = "SELECT SUBSTR(TIME_ID,1,12) AS DATE," \
           "	WIND_PW AS PW," \
           "	WIND_PW_CAPA AS CAPA," \
           "	TEMP_MAX " \
           "FROM	AST0401 " \
           "WHERE	1 = 1	" \
-          "AND TIME_ID BETWEEN '20190101' AND '20210401' "
+          "AND TIME_ID BETWEEN '20160101' AND '20210401' "
 
-sqlTextWindBelgium6M = "SELECT SUBSTR(TIME_ID,1,12) AS DATE," \
+
+sqlTextWindBelgiumAllM3 = "SELECT SUBSTR(TIME_ID,1,12) AS DATE," \
           "	WIND_PW AS PW," \
           "	WIND_PW_CAPA AS CAPA," \
-          "	TEMP_MAX " \
+          "	TEMP_MAX, " \
+          "	TEMP_MIN, " \
+          "	RADIATION " \
           "FROM	AST0401 " \
           "WHERE	1 = 1	" \
-          "AND TIME_ID BETWEEN '20190101' AND '20210401' "
+          "AND TIME_ID BETWEEN '20210101' AND '20210401' "
 
-
-sqlTextWindBelgium1Y = "SELECT SUBSTR(TIME_ID,1,12) AS DATE," \
+sqlTextWindBelgiumAllM6 = "SELECT SUBSTR(TIME_ID,1,12) AS DATE," \
           "	WIND_PW AS PW," \
           "	WIND_PW_CAPA AS CAPA," \
-          "	TEMP_MAX " \
-          "FROM	AST0401 " \
+          "	TEMP_MAX, " \
+          "	TEMP_MIN, " \
+          "	RADIATION " \
+         "FROM	AST0401 " \
           "WHERE	1 = 1	" \
-          "AND TIME_ID BETWEEN '20190101' AND '20210401' "
+          "AND TIME_ID BETWEEN '20201002' AND '20210401' "
 
 
-sqlTextWindBelgium2Y = "SELECT SUBSTR(TIME_ID,1,12) AS DATE," \
+sqlTextWindBelgiumAllY1 = "SELECT SUBSTR(TIME_ID,1,12) AS DATE," \
           "	WIND_PW AS PW," \
           "	WIND_PW_CAPA AS CAPA," \
-          "	TEMP_MAX " \
+          "	TEMP_MAX, " \
+          "	TEMP_MIN, " \
+          "	RADIATION " \
           "FROM	AST0401 " \
           "WHERE	1 = 1	" \
-          "AND TIME_ID BETWEEN '20190101' AND '20210401' "
+          "AND TIME_ID BETWEEN '20200401' AND '20210401' "
 
 
-sqlTextWindBelgium5Y = "SELECT SUBSTR(TIME_ID,1,12) AS DATE," \
+sqlTextWindBelgiumAllY2 = "SELECT SUBSTR(TIME_ID,1,12) AS DATE," \
           "	WIND_PW AS PW," \
           "	WIND_PW_CAPA AS CAPA," \
-          "	TEMP_MAX " \
+          "	TEMP_MAX, " \
+          "	TEMP_MIN, " \
+          "	RADIATION " \
           "FROM	AST0401 " \
           "WHERE	1 = 1	" \
-          "AND TIME_ID BETWEEN '20190101' AND '20210401' "
+          "AND TIME_ID BETWEEN '20190401' AND '20210401' "
 
 
 sqlTextWindBelgiumAll = "SELECT	SUBSTR(TIME_ID,1,12) AS DATE," \
@@ -53,15 +59,60 @@ sqlTextWindBelgiumAll = "SELECT	SUBSTR(TIME_ID,1,12) AS DATE," \
           "	RADIATION " \
           "FROM	AST0401 " \
           "WHERE	1 = 1	" \
-          "AND TIME_ID BETWEEN '20190101' AND '20210401' "
+          "AND TIME_ID BETWEEN '20160101' AND '20210401' "
 
+###########################################################
 sqlTextSolarBelgium = "SELECT SUBSTR(TIME_ID,1,12) AS DATE," \
           "	SOLAR_PW AS PW," \
           "	SOLAR_PW_CAPA AS CAPA," \
           "	TEMP_MAX " \
           "FROM	AST0401 " \
           "WHERE	1 = 1	" \
-          "AND TIME_ID BETWEEN '20190101' AND '20210401' "
+          "AND TIME_ID BETWEEN '20160101' AND '20210401' "
+
+
+sqlTextSolarBelgiumAllM3 = "SELECT	SUBSTR(TIME_ID,1,12) AS DATE," \
+          "	SOLAR_PW AS PW," \
+          "	SOLAR_PW_CAPA AS CAPA," \
+          "	TEMP_MAX, " \
+          "	TEMP_MIN, " \
+          "	RADIATION " \
+          "FROM	AST0401 " \
+          "WHERE	1 = 1	" \
+          "AND TIME_ID BETWEEN '20210101' AND '20210401' "
+
+
+sqlTextSolarBelgiumAllM6 = "SELECT	SUBSTR(TIME_ID,1,12) AS DATE," \
+          "	SOLAR_PW AS PW," \
+          "	SOLAR_PW_CAPA AS CAPA," \
+          "	TEMP_MAX, " \
+          "	TEMP_MIN, " \
+          "	RADIATION " \
+          "FROM	AST0401 " \
+          "WHERE	1 = 1	" \
+          "AND TIME_ID BETWEEN '20201001' AND '20210401' "
+
+
+sqlTextSolarBelgiumAllY1 = "SELECT	SUBSTR(TIME_ID,1,12) AS DATE," \
+          "	SOLAR_PW AS PW," \
+          "	SOLAR_PW_CAPA AS CAPA," \
+          "	TEMP_MAX, " \
+          "	TEMP_MIN, " \
+          "	RADIATION " \
+          "FROM	AST0401 " \
+          "WHERE	1 = 1	" \
+          "AND TIME_ID BETWEEN '20200401' AND '20210401' "
+
+
+sqlTextSolarBelgiumAllY2 = "SELECT	SUBSTR(TIME_ID,1,12) AS DATE," \
+          "	SOLAR_PW AS PW," \
+          "	SOLAR_PW_CAPA AS CAPA," \
+          "	TEMP_MAX, " \
+          "	TEMP_MIN, " \
+          "	RADIATION " \
+          "FROM	AST0401 " \
+          "WHERE	1 = 1	" \
+          "AND TIME_ID BETWEEN '20190401' AND '20210401' "
 
 
 sqlTextSolarBelgiumAll = "SELECT SUBSTR(TIME_ID,1,12) AS DATE," \
@@ -72,8 +123,10 @@ sqlTextSolarBelgiumAll = "SELECT SUBSTR(TIME_ID,1,12) AS DATE," \
           "	RADIATION " \
           "FROM	AST0401 " \
           "WHERE	1 = 1	" \
-          "AND TIME_ID BETWEEN '20190101' AND '20210401' "
+          "AND TIME_ID BETWEEN '20160101' AND '20210401' "
 
+
+####################
 
 sqlTextBelgiumEnergyAll = "SELECT SUBSTR(TIME_ID,1,12) AS DATE," \
           "	SOLAR_PW + WIND_PW AS PW," \
@@ -90,57 +143,4 @@ sqlTextBelgiumEnergyAll = "SELECT SUBSTR(TIME_ID,1,12) AS DATE," \
           "AND TIME_ID BETWEEN '20190101' AND '20210401' "
 
 
-sqlTextWindBelgiumAllM3 = "SELECT	SUBSTR(TIME_ID,1,12) AS DATE," \
-          "	WIND_PW AS PW," \
-          "	WIND_PW_CAPA AS CAPA," \
-          "	TEMP_MAX, " \
-          "	TEMP_MIN, " \
-          "	RADIATION " \
-          "FROM	AST0401 " \
-          "WHERE	1 = 1	" \
-          "AND TIME_ID BETWEEN '20210101' AND '20210401' "
-
-
-sqlTextWindBelgiumAllM6 = "SELECT	SUBSTR(TIME_ID,1,12) AS DATE," \
-          "	WIND_PW AS PW," \
-          "	WIND_PW_CAPA AS CAPA," \
-          "	TEMP_MAX, " \
-          "	TEMP_MIN, " \
-          "	RADIATION " \
-          "FROM	AST0401 " \
-          "WHERE	1 = 1	" \
-          "AND TIME_ID BETWEEN '20201001' AND '20210401' "
-
-
-sqlTextWindBelgiumAllY1 = "SELECT	SUBSTR(TIME_ID,1,12) AS DATE," \
-          "	WIND_PW AS PW," \
-          "	WIND_PW_CAPA AS CAPA," \
-          "	TEMP_MAX, " \
-          "	TEMP_MIN, " \
-          "	RADIATION " \
-          "FROM	AST0401 " \
-          "WHERE	1 = 1	" \
-          "AND TIME_ID BETWEEN '20200401' AND '20210401' "
-
-
-sqlTextWindBelgiumAllY2 = "SELECT	SUBSTR(TIME_ID,1,12) AS DATE," \
-          "	WIND_PW AS PW," \
-          "	WIND_PW_CAPA AS CAPA," \
-          "	TEMP_MAX, " \
-          "	TEMP_MIN, " \
-          "	RADIATION " \
-          "FROM	AST0401 " \
-          "WHERE	1 = 1	" \
-          "AND TIME_ID BETWEEN '20190401' AND '20210401' "
-
-
-sqlTextWindBelgiumAllY5 = "SELECT	SUBSTR(TIME_ID,1,12) AS DATE," \
-          "	WIND_PW AS PW," \
-          "	WIND_PW_CAPA AS CAPA," \
-          "	TEMP_MAX, " \
-          "	TEMP_MIN, " \
-          "	RADIATION " \
-          "FROM	AST0401 " \
-          "WHERE	1 = 1	" \
-          "AND TIME_ID BETWEEN '20160401' AND '20210401' "
 

@@ -13,60 +13,6 @@ import SGAN.SQL.sqlList as sqlList
 
 #el.read_weather_data_from_excel(base_dir, None)
 
-sqlTextWindBelgium = "SELECT SUBSTR(TIME_ID,1,12) AS DATE," \
-          "	WIND_PW AS PW," \
-          "	WIND_PW_CAPA AS CAPA," \
-          "	TEMP_MAX " \
-          "FROM	AST0401 " \
-          "WHERE	1 = 1	" \
-          "AND TIME_ID BETWEEN '20190101' AND '20210401' "
-
-
-sqlTextWindBelgiumAll = "SELECT	SUBSTR(TIME_ID,1,12) AS DATE," \
-          "	WIND_PW AS PW," \
-          "	WIND_PW_CAPA AS CAPA," \
-          "	TEMP_MAX, " \
-          "	TEMP_MIN, " \
-          "	RADIATION " \
-          "FROM	AST0401 " \
-          "WHERE	1 = 1	" \
-          "AND TIME_ID BETWEEN '20190101' AND '20210401' "
-
-sqlTextSolarBelgium = "SELECT SUBSTR(TIME_ID,1,12) AS DATE," \
-          "	SOLAR_PW AS PW," \
-          "	SOLAR_PW_CAPA AS CAPA," \
-          "	TEMP_MAX " \
-          "FROM	AST0401 " \
-          "WHERE	1 = 1	" \
-          "AND TIME_ID BETWEEN '20190101' AND '20210401' "
-
-
-sqlTextSolarBelgiumAll = "SELECT SUBSTR(TIME_ID,1,12) AS DATE," \
-          "	SOLAR_PW AS PW," \
-          "	SOLAR_PW_CAPA AS CAPA," \
-          "	TEMP_MAX, " \
-          "	TEMP_MIN, " \
-          "	RADIATION " \
-          "FROM	AST0401 " \
-          "WHERE	1 = 1	" \
-          "AND TIME_ID BETWEEN '20190101' AND '20210401' "
-
-
-sqlTextBelgiumEnergyAll = "SELECT SUBSTR(TIME_ID,1,12) AS DATE," \
-          "	SOLAR_PW + WIND_PW AS PW," \
-          "	SOLAR_PW_CAPA + WIND_PW_CAPA AS CAPA," \
-          "	SOLAR_PW AS SOLAR_PW," \
-          "	SOLAR_PW_CAPA AS SOLAR_CAPA," \
-          "	WIND_PW AS WIND_PW," \
-          "	WIND_PW_CAPA AS WIND_CAPA," \
-          "	TEMP_MAX, " \
-          "	TEMP_MIN, " \
-          "	RADIATION " \
-          "FROM	AST0401 " \
-          "WHERE	1 = 1	" \
-          "AND TIME_ID BETWEEN '20190101' AND '20210401' "
-
-
 base_dir="./DataFiles/"
 
 
@@ -109,135 +55,230 @@ def init():
 
     if windDataFileExists() is False:
         print(">Download Wind data From DB...")
-        dl.dataLoadSQL(sqlTextWindBelgium, base_dir + "WindData.csv", indexSet=False)
+        dl.dataLoadSQL(sqlList.sqlTextWindBelgium, base_dir + "WindData.csv", indexSet=False)
 
     if dataFileExists("WindAllData.csv") is False:
         print(">Download Wind data From Wind All DB...")
-        dl.dataLoadSQL(sqlTextWindBelgiumAll, base_dir + "WindAllData.csv", indexSet=False)
+        dl.dataLoadSQL(sqlList.sqlTextWindBelgiumAll, base_dir + "WindAllData.csv", indexSet=False)
+    ###
 
     if dataFileExists("WindAllDataM3.csv") is False:
-        print(">Download Wind data From Wind All DB...")
+        print(">Download Wind data From Wind All DB For 3-Month...")
         dl.dataLoadSQL(sqlList.sqlTextWindBelgiumAllM3, base_dir + "WindAllDataM3.csv", indexSet=False)
 
     if dataFileExists("WindAllDataM6.csv") is False:
-        print(">Download Wind data From Wind All DB...")
+        print(">Download Wind data From Wind All DB For 6-Month...")
         dl.dataLoadSQL(sqlList.sqlTextWindBelgiumAllM6, base_dir + "WindAllDataM6.csv", indexSet=False)
 
     if dataFileExists("WindAllDataY1.csv") is False:
-        print(">Download Wind data From Wind All DB...")
+        print(">Download Wind data From Wind All DB For 1-Year...")
         dl.dataLoadSQL(sqlList.sqlTextWindBelgiumAllY1, base_dir + "WindAllDataY1.csv", indexSet=False)
 
     if dataFileExists("WindAllDataY2.csv") is False:
-        print(">Download Wind data From Wind All DB...")
+        print(">Download Wind data From Wind All DB For 2 Year...")
         dl.dataLoadSQL(sqlList.sqlTextWindBelgiumAllY2, base_dir + "WindAllDataY2.csv", indexSet=False)
 
-    if dataFileExists("WindAllDataY5.csv") is False:
-        print(">Download Wind data From Wind All DB...")
-        dl.dataLoadSQL(sqlList.sqlTextWindBelgiumAllY5, base_dir + "WindAllDataY5.csv", indexSet=False)
 
-
+    ###
     if solarDataFileExists() is False:
         print(">Download Solar data From DB...")
-        dl.dataLoadSQL(sqlTextSolarBelgium, base_dir + "SolarData.csv", indexSet=False)
+        dl.dataLoadSQL(sqlList.sqlTextSolarBelgium, base_dir + "SolarData.csv", indexSet=False)
 
     if dataFileExists("SolarAllData.csv") is False:
-        print(">Download Wind data From Solar All DB...")
-        dl.dataLoadSQL(sqlTextSolarBelgium, base_dir + "SolarAllData.csv", indexSet=False)
+        print(">Download Solar data From Solar All DB...")
+        dl.dataLoadSQL(sqlList.sqlTextSolarBelgiumAll, base_dir + "SolarAllData.csv", indexSet=False)
 
+    ###
+    if dataFileExists("SolarAllDataM3.csv") is False:
+        print(">Download Solar data From Solar All DB For 3-Month...")
+        dl.dataLoadSQL(sqlList.sqlTextSolarBelgiumAllM3, base_dir + "SolarAllDataM3.csv", indexSet=False)
+
+    if dataFileExists("SolarAllDataM6.csv") is False:
+        print(">Download Solar data From Solar All DB For 6-Month...")
+        dl.dataLoadSQL(sqlList.sqlTextSolarBelgiumAllM6, base_dir + "SolarAllDataM6.csv", indexSet=False)
+
+    if dataFileExists("SolarAllDataY1.csv") is False:
+        print(">Download Solar data From Solar All DB For 1-Year...")
+        dl.dataLoadSQL(sqlList.sqlTextSolarBelgiumAllY1, base_dir + "SolarAllDataY1.csv", indexSet=False)
+
+    if dataFileExists("SolarAllDataY2.csv") is False:
+        print(">Download Solar data From Solar All DB For 2-Year...")
+        dl.dataLoadSQL(sqlList.sqlTextSolarBelgiumAllY2, base_dir + "SolarAllDataY2.csv", indexSet=False)
+
+    ####
+
+    ####
     if dataFileExists("BelgiumAllData.csv") is False:
-        print(">Download Wind data From Belgium Energy All DB...")
-        dl.dataLoadSQL(sqlTextBelgiumEnergyAll, base_dir + "BelgiumAllData.csv", indexSet=False)
+        print(">Download Wind+Solar data From Belgium Energy All DB...")
+        dl.dataLoadSQL(sqlList.sqlTextBelgiumEnergyAll, base_dir + "BelgiumAllData.csv", indexSet=False)
+    #####
 
+
+def fftSave(fileName):
+    if dataFileExists(fileName+".csv"):
+        dfData = pd.read_csv(base_dir + fileName+".csv")
+        fftDataProcess(dfData, base_dir + fileName+"FFT.csv")
 
 def main():
     ## import data
     #df = pd.read_csv('windData.csv')
     figsizeSet = (15, 5)
+    PlotShow = False
+
     if windDataFileExists():
         dfWind = pd.read_csv(base_dir + 'WindData.csv')
 
-        print(dfWind.head())
-        print(dfWind.tail())
-        print(dfWind.shape)
-        print(dfWind.columns)
+        #print(dfWind.head())
+        #print(dfWind.tail())
+        #print(dfWind.shape)
+        #print(dfWind.columns)
 
-        fig, ax = plt.subplots(figsize=figsizeSet)
-        ax.plot(dfWind.index, dfWind['PW'], label='Wind Power')
-        ax.set(xlabel="15min",
-               ylabel="MW",
-               title="Wind Power Belgium(2016-2021)")
-        plt.tight_layout()
-        plt.show()
+        if PlotShow is True:
+            fig, ax = plt.subplots(figsize=figsizeSet)
+            ax.plot(dfWind.index, dfWind['PW'], label='Wind Power')
+            ax.set(xlabel="15min",
+                   ylabel="MW",
+                   title="Wind Power Belgium(2016-2021)")
+            plt.tight_layout()
+            plt.show()
 
-        fig, ax = plt.subplots(figsize=figsizeSet)
-        ax.plot(dfWind.index, dfWind['PW'], label='Wind Power')
-        ax.plot(dfWind.index, dfWind['CAPA'], label='Power Installation')
-        ax.set(xlabel="15min",
-               ylabel="MW",
-               title="Wind Power Belgium(2016-2021) && Installation")
-        plt.tight_layout()
-        plt.show()
+            fig, ax = plt.subplots(figsize=figsizeSet)
+            ax.plot(dfWind.index, dfWind['PW'], label='Wind Power')
+            ax.plot(dfWind.index, dfWind['CAPA'], label='Power Installation')
+            ax.set(xlabel="15min",
+                   ylabel="MW",
+                   title="Wind Power Belgium(2016-2021) && Installation")
+            plt.tight_layout()
+            plt.show()
+
+
+            fig, ax = plt.subplots(figsize=figsizeSet)
+            sampleData = dfWind[2500:4000]
+            ax.plot(sampleData.index, sampleData['PW'], label='Solar+Wind Power')
+            # ax.plot(dfData.index, dfData['CAPA'], label='Installed Solar+Wind Power')
+            ax.set(xlabel="15min",
+                   ylabel="MW",
+                   title="Wind  Power Belgium(2week)")
+            plt.tight_layout()
+            plt.show()
 
         fftDataProcess(dfWind, base_dir+"WindDataFFT.csv")
 
 
     if solarDataFileExists():
         dfSolar = pd.read_csv(base_dir + 'SolarData.csv')
-        fig, ax = plt.subplots(figsize=figsizeSet)
-        ax.plot(dfSolar.index, dfSolar['PW'], label='Solar Power')
-        ax.set(xlabel="15min",
-               ylabel="MW",
-               title="Solar Power Belgium(2016-2021)")
-        plt.tight_layout()
-        plt.show()
 
-        fig, ax = plt.subplots(figsize=figsizeSet)
-        ax.plot(dfSolar.index, dfSolar['PW'], label='Solar Power')
-        ax.plot(dfSolar.index, dfSolar['CAPA'], label='Power Installation')
-        ax.set(xlabel="15min",
-               ylabel="MW",
-               title="Solar Power Belgium(2016-2021) && Installation")
-        plt.tight_layout()
-        plt.show()
+        if PlotShow is True:
+            fig, ax = plt.subplots(figsize=figsizeSet)
+            ax.plot(dfSolar.index, dfSolar['PW'], label='Solar Power')
+            ax.set(xlabel="15min",
+                   ylabel="MW",
+                   title="Solar Power Belgium(2016-2021)")
+            plt.tight_layout()
+            plt.show()
+
+            fig, ax = plt.subplots(figsize=figsizeSet)
+            ax.plot(dfSolar.index, dfSolar['PW'], label='Solar Power')
+            ax.plot(dfSolar.index, dfSolar['CAPA'], label='Power Installation')
+            ax.set(xlabel="15min",
+                   ylabel="MW",
+                   title="Solar Power Belgium(2016-2021) && Installation")
+            plt.tight_layout()
+            plt.show()
+
+            fig, ax = plt.subplots(figsize=figsizeSet)
+            sampleData = dfSolar[2500:4000]
+            ax.plot(sampleData.index, sampleData['PW'], label='Solar+Wind Power')
+            # ax.plot(dfData.index, dfData['CAPA'], label='Installed Solar+Wind Power')
+            ax.set(xlabel="15min",
+                   ylabel="MW",
+                   title="Solar Power Belgium(2week)")
+            plt.tight_layout()
+            plt.show()
 
         fftDataProcess(dfSolar, base_dir+"SolarDataFFT.csv")
 
+
+
     if dataFileExists("BelgiumAllData.csv"):
         dfData = pd.read_csv(base_dir + 'BelgiumAllData.csv')
-        fig, ax = plt.subplots(figsize=figsizeSet)
-        ax.plot(dfData.index, dfData['PW'], label='Solar+Wind Power')
-        ax.plot(dfData.index, dfData['CAPA'], label='Installed Solar+Wind Power')
-        ax.set(xlabel="15min",
-               ylabel="MW",
-               title="Solar+Wind  Power Belgium(2016-2021)")
-        plt.tight_layout()
-        plt.show()
 
-        fig, ax = plt.subplots(figsize=figsizeSet)
-        ax.plot(dfData.index, dfData['TEMP_MAX'], label='Temperatures Max')
-        ax.plot(dfData.index, dfData['TEMP_MIN'], label='Temperatures Min')
+        if PlotShow is True & windDataFileExists() & solarDataFileExists():
+            fig, ax = plt.subplots(figsize=figsizeSet)
+            ax.plot(dfData.index, dfData['PW'], label='Solar+Wind Power')
+            ax.plot(dfSolar.index, dfSolar['PW'], label='Solar Power')
+            ax.plot(dfWind.index, dfWind['PW'], label='Wind Power')
+            ax.plot(dfData.index, dfData['CAPA'], label='Installed Solar+Wind Power')
+            ax.plot(dfSolar.index, dfSolar['CAPA'], label='Installed Solar Power')
+            ax.plot(dfWind.index, dfWind['CAPA'], label='Installed Wind Power')
+            ax.set(xlabel="15min",
+                   ylabel="MW",
+                   title="Solar+Wind  Power Belgium(2016-2021)")
+            plt.tight_layout()
+            plt.legend()
+            plt.show()
 
-        # ax.plot(dfSolar.index, dfSolar['TEMP_MAX'], label='Temp Max')
-        ax.set(xlabel="Days(15min Points)",
-               ylabel="degree",
-               title="Belgium Temperature(2016-2021)")
-        # date_form = DateFormatter("%Y%m%d%H%M")
-        # ax.xaxis.set_major_formatter(date_form)
-        plt.legend()
-        plt.tight_layout()
-        plt.show()
+        if PlotShow is True:
+            fig, ax = plt.subplots(figsize=figsizeSet)
+            ax.plot(dfData.index, dfData['TEMP_MAX'], label='Temperatures Max')
+            ax.plot(dfData.index, dfData['TEMP_MIN'], label='Temperatures Min')
 
-        fig, ax = plt.subplots(figsize=figsizeSet)
-        ax.plot(dfData.index, dfData['RADIATION'], label='RADIATION MAX PER DAY')
-        # ax.plot(dfSolar.index, dfSolar['TEMP_MAX'], label='Temp Max')
-        ax.set(xlabel="Days(15min Points)",
-               ylabel="W/M",
-               title="Belgium RADIATION(2016-2021)")
-        # date_form = DateFormatter("%Y%m%d%H%M")
-        # ax.xaxis.set_major_formatter(date_form)
-        plt.legend()
-        plt.tight_layout()
-        plt.show()
+            # ax.plot(dfSolar.index, dfSolar['TEMP_MAX'], label='Temp Max')
+            ax.set(xlabel="Days(15min Points)",
+                   ylabel="degree",
+                   title="Belgium Temperature(2016-2021)")
+            # date_form = DateFormatter("%Y%m%d%H%M")
+            # ax.xaxis.set_major_formatter(date_form)
+            plt.legend()
+            plt.tight_layout()
+            plt.show()
+
+        if PlotShow is True:
+            fig, ax = plt.subplots(figsize=figsizeSet)
+            ax.plot(dfData.index, dfData['RADIATION'], label='RADIATION MAX PER DAY')
+            # ax.plot(dfSolar.index, dfSolar['TEMP_MAX'], label='Temp Max')
+            ax.set(xlabel="Days(15min Points)",
+                   ylabel="W/M",
+                   title="Belgium RADIATION(2016-2021)")
+            # date_form = DateFormatter("%Y%m%d%H%M")
+            # ax.xaxis.set_major_formatter(date_form)
+            plt.legend()
+            plt.tight_layout()
+            plt.show()
+
+        if PlotShow is True & windDataFileExists() & solarDataFileExists():
+            fig, ax = plt.subplots(figsize=figsizeSet)
+            sampleData = dfData[2500:4000]
+            # print(sampleData.DATE)
+            ax.plot(sampleData.index, sampleData['PW'], label='Solar+Wind Power')
+            sampleData = dfWind[2500:4000]
+            ax.plot(sampleData.index, sampleData['PW'], label='Wind Power')
+            sampleData = dfSolar[2500:4000]
+            ax.plot(sampleData.index, sampleData['PW'], label='Solar Power')
+            # ax.plot(dfData.index, dfData['CAPA'], label='Installed Solar+Wind Power')
+            ax.set(xlabel="15min",
+                   ylabel="MW",
+                   title="Solar+Wind  Power Belgium(2week)")
+            plt.tight_layout()
+            plt.legend()
+            plt.show()
+
+        if PlotShow is True & windDataFileExists() & solarDataFileExists():
+            fig, ax = plt.subplots(figsize=figsizeSet)
+            sampleData = dfData[5000:6500]
+            # print(sampleData.DATE)
+            ax.plot(sampleData.index, sampleData['PW'], label='Solar+Wind Power')
+            sampleData = dfWind[5000:6500]
+            ax.plot(sampleData.index, sampleData['PW'], label='Wind Power')
+            sampleData = dfSolar[5000:6500]
+            ax.plot(sampleData.index, sampleData['PW'], label='Solar Power')
+            # ax.plot(dfData.index, dfData['CAPA'], label='Installed Solar+Wind Power')
+            ax.set(xlabel="15min",
+                   ylabel="MW",
+                   title="Solar+Wind  Power Belgium(2week)")
+            plt.tight_layout()
+            plt.legend()
+            plt.show()
 
         # db1 = pywt.Wavelet('db1')
         # (cA2, cD2), (cA1, cD1) = pywt.swt(dfData['PW'] / 6000 , db1, level=2)
@@ -246,8 +287,19 @@ def main():
         # ax.plot(dfData.index, cA1, label='Wavelet cA1')
         # ax.plot(dfData.index, cD1, label='Wavelet cD1')
         # plt.show()
+        fftDataProcess(dfData, base_dir+"BelgiumAllDataFFT.csv")
 
-        fftDataProcess(dfSolar, base_dir+"BelgiumAllDataFFT.csv")
+    fftSave("SolarAllData")
+    fftSave("SolarAllDataM3")
+    fftSave("SolarAllDataM6")
+    fftSave("SolarAllDataY1")
+    fftSave("SolarAllDataY2")
+
+    fftSave("WindAllData")
+    fftSave("WindAllDataM3")
+    fftSave("WindAllDataM6")
+    fftSave("WindAllDataY1")
+    fftSave("WindAllDataY2")
 
 
 
@@ -265,13 +317,17 @@ def fftDataProcess(df, filename):
     dataJoined.to_csv(filename, index=False)
 
     # show indicator plot
-    plot_technical_indicators(df_technicalIndicated, 17000)
+    # plot_technical_indicators(df_technicalIndicated, 17000)
     # show ifft plot
     warnings.filterwarnings(action='ignore') # waring ignore
-    plot_Fourier(dataset, filename)
+    # plot_Fourier(dataset, filename)
     warnings.filterwarnings(action='default') # waring ignore
 
-    convert_Wavelet(dataset, filename)
+    print(len(dataset))
+    if len(dataset) % 2 == 0:
+        convert_Wavelet(dataset, filename)
+    else:
+        convert_Wavelet(dataset[1:], filename)
 
 
 
@@ -385,6 +441,10 @@ def plot_Fourier(dataset, plotname):
 def convert_Wavelet(dataset, filename):
     # dataset['row'] = dataset.reset_index().index # 인덱스를 읽어서 새로운 row 생성
     # dataset.set_index('row', inplace=True) # row를 새로운 인덱스로 설정
+    print("Convering Wavelet Data....")
+    PlotShow = False
+    SWT_LEVEL2 = False
+
     if filename is not None:
         infoFile = filename
     else:
@@ -402,54 +462,106 @@ def convert_Wavelet(dataset, filename):
     A = pywt.idwt(cA, None, 'db1', 'smooth')
     D = pywt.idwt(None, cD, 'db1', 'smooth')
 
-    plt.figure(figsize=figsizeSet)
-    plt.plot(A, label='Wavelet A')
-    plt.plot(D, label='Wavelet D')
-    plt.title(infoFile + "DWT db1/smooth")
-    plt.tight_layout()
-    plt.legend()
-    plt.show()
+    if PlotShow is True:
+        plt.figure(figsize=figsizeSet)
+        plt.plot(A, label='Wavelet A')
+        plt.plot(D, label='Wavelet D')
+        plt.title(infoFile + "DWT db1/smooth")
+        plt.tight_layout()
+        plt.legend()
+        plt.show()
 
     # MultiLevel 2
     coeffsMultiLevel2 = pywt.wavedec(npData_power, 'db1', level=2)
     cA2, cD2, cD1 = coeffsMultiLevel2
 
-    plt.figure(figsize=figsizeSet)
-    plt.plot(cA2, label='Wavelet cA2')
-    plt.plot(cD2, label='Wavelet cD2')
-    plt.plot(cD1, label='Wavelet cD1')
-    plt.title(infoFile + " DWT MultiLevel 2")
-    plt.tight_layout()
-    plt.legend()
-    plt.show()
+    if PlotShow is True:
+        plt.figure(figsize=figsizeSet)
+        plt.plot(cA2, label='Wavelet cA2')
+        plt.plot(cD2, label='Wavelet cD2')
+        plt.plot(cD1, label='Wavelet cD1')
+        plt.title(infoFile + " DWT MultiLevel 2")
+        plt.tight_layout()
+        plt.legend()
+        plt.show()
 
     # MultiLevel 3
     coeffsMultiLevel3 = pywt.wavedec(npData_power, 'db1', level=3)
     cA4, cD32, cD22, cD12 = coeffsMultiLevel3
 
-    plt.figure(figsize=figsizeSet)
-    plt.plot(cA4, label='Wavelet cA4', color='blue')
-    plt.plot(cD32, label='Wavelet cD32', color='g')
-    plt.plot(cD22, label='Wavelet cD22', color='r')
-    plt.plot(cD12, label='Wavelet cD12', color='c')
-    plt.title(infoFile + "DWT MultiLevel 3")
-    plt.tight_layout()
-    plt.legend()
-    plt.show()
+    if PlotShow is True:
+        plt.figure(figsize=figsizeSet)
+        plt.plot(cA4, label='Wavelet cA4', color='blue')
+        plt.plot(cD32, label='Wavelet cD32', color='g')
+        plt.plot(cD22, label='Wavelet cD22', color='r')
+        plt.plot(cD12, label='Wavelet cD12', color='c')
+        plt.title(infoFile + "DWT MultiLevel 3")
+        plt.tight_layout()
+        plt.legend()
+        plt.show()
+
+    if PlotShow is True:
+        plt.figure(figsize=figsizeSet)
+        plt.plot(cA4[2500:4000], label='Wavelet cA4 Sample', color='blue')
+        plt.plot(cD32[2500:4000], label='Wavelet cD32 Sample', color='g')
+        plt.plot(cD22[2500:4000], label='Wavelet cD22 Sample', color='r')
+        plt.plot(cD12[2500:4000], label='Wavelet cD12 Sample', color='c')
+        plt.title(infoFile + "DWT MultiLevel MultiLevel 3 Sample")
+        plt.tight_layout()
+        plt.legend()
+        plt.show()
+
+    if PlotShow is True:
+        plt.figure(figsize=figsizeSet)
+        plt.plot(cA4[5000:6500], label='Wavelet cA4 Sample', color='blue')
+        plt.plot(cD32[5000:6500], label='Wavelet cD32 Sample', color='g')
+        plt.plot(cD22[5000:6500], label='Wavelet cD22 Sample', color='r')
+        plt.plot(cD12[5000:6500], label='Wavelet cD12 Sample', color='c')
+        plt.title(infoFile + "DWT MultiLevel MultiLevel 3 Sample")
+        plt.tight_layout()
+        plt.legend()
+        plt.show()
 
     # SWT MultiLevel 2
-    db1 = pywt.Wavelet('db1')
-    (cA2, cD2), (cA1, cD1) = pywt.swt(npData_power[1:], db1, level=2)
+    if SWT_LEVEL2 is True:
+        db1 = pywt.Wavelet('db1')
+        print("hellow")
+        print(len(npData_power))
+        (cA2, cD2), (cA1, cD1) = pywt.swt(npData_power, db1, level=2)
 
-    plt.figure(figsize=figsizeSet)
-    plt.plot(cA2, label='Wavelet cA2', color='blue')
-    plt.plot(cD2, label='Wavelet cD2', color='g')
-    plt.plot(cA1, label='Wavelet cA1', color='r')
-    plt.plot(cD1, label='Wavelet cD1', color='c')
-    plt.title(infoFile + "SWT(Stationary wavelet transform) MultiLevel 2")
-    plt.tight_layout()
-    plt.legend()
-    plt.show()
+        if PlotShow is True:
+            plt.figure(figsize=figsizeSet)
+            plt.plot(cA2, label='Wavelet cA2', color='blue')
+            plt.plot(cD2, label='Wavelet cD2', color='g')
+            plt.plot(cA1, label='Wavelet cA1', color='r')
+            plt.plot(cD1, label='Wavelet cD1', color='c')
+            plt.title(infoFile + "SWT(Stationary wavelet transform) MultiLevel 2")
+            plt.tight_layout()
+            plt.legend()
+            plt.show()
+
+            plt.figure(figsize=figsizeSet)
+            plt.plot(cA2[2500:4000], label='Wavelet cA4 Sample', color='blue')
+            plt.plot(cD2[2500:4000], label='Wavelet cD32 Sample', color='g')
+            plt.plot(cA1[2500:4000], label='Wavelet cD22 Sample', color='r')
+            plt.plot(cD1[2500:4000], label='Wavelet cD12 Sample', color='c')
+            plt.title(infoFile + "SWT(Stationary wavelet transform) MultiLevel 2 Sample")
+            plt.tight_layout()
+            plt.legend()
+            plt.show()
+
+
+        plt.figure(figsize=figsizeSet)
+        plt.plot(cA2[5000:6500], label='Wavelet cA4 Sample', color='blue')
+        plt.plot(cD2[5000:6500], label='Wavelet cD32 Sample', color='g')
+        plt.plot(cA1[5000:6500], label='Wavelet cD22 Sample', color='r')
+        plt.plot(cD1[5000:6500], label='Wavelet cD12 Sample', color='c')
+        plt.title(infoFile + " SWT(Stationary wavelet transform) MultiLevel 2 Sample")
+        plt.tight_layout()
+        plt.legend()
+        plt.show()
+
+
 
     return
 
