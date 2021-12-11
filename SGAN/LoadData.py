@@ -323,12 +323,23 @@ def fftDataProcess(df, filename):
     # plot_Fourier(dataset, filename)
     warnings.filterwarnings(action='default') # waring ignore
 
-    print(len(dataset))
+    # print(len(dataset))
+    A = list()
+    D = list()
     if len(dataset) % 2 == 0:
-        convert_Wavelet(dataset, filename)
+        A, D = convert_Wavelet(dataset, filename)
     else:
-        convert_Wavelet(dataset[1:], filename)
+        A, D = convert_Wavelet(dataset[1:], filename)
+    listA = pd.DataFrame(A,columns=['DWT_A'])
+    listD = pd.DataFrame(D,columns=['DWT_D'])
 
+    totl = len(dataJoined)
+    tmp_dwt = pd.concat([listA[:totl], listD[:totl]], axis=1)
+    dwt_df = pd.concat([dataJoined, tmp_dwt], axis=1)
+    dwt_df['DATE'].astype(int)
+    dwt_df.to_csv(filename[:-4]+"_DWT.csv", index=False)
+    #dataJoined['DWT_A'] = A
+    #dataJoined['DWT_D'] = D
 
 
 def get_technical_indicators(data):
@@ -377,8 +388,8 @@ def get_fourier_transfer(dataset):
         fft_list_m10[num_:-num_] = 0
         fft_ = np.fft.ifft(fft_list_m10)
         fft_com = pd.DataFrame({'fft': fft_})
-        fft_com['absolute of ' + str(num_) + ' comp'] = fft_com['fft'].apply(lambda x: np.abs(x))
-        fft_com['angle of ' + str(num_) + ' comp'] = fft_com['fft'].apply(lambda x: np.angle(x))
+        fft_com['ABS_' + str(num_) + 'COMP'] = fft_com['fft'].apply(lambda x: np.abs(x))
+        fft_com['ANGLE_' + str(num_) + 'COMP'] = fft_com['fft'].apply(lambda x: np.angle(x))
         fft_com = fft_com.drop(columns='fft')
         fft_com_df = pd.concat([fft_com_df, fft_com], axis=1)
     return fft_com_df
@@ -563,7 +574,7 @@ def convert_Wavelet(dataset, filename):
 
 
 
-    return
+    return A, D
 
 
 

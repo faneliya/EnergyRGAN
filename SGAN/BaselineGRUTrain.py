@@ -21,48 +21,50 @@ from pickle import load
 DataFilesDir="./DataFiles/"
 ProcessedFilesDir="./ProcessedFiles/"
 ModelFileDir="./ModelSaves/"
-TrainCaseName = 'WindFFT'
+
+######################################################################################################################
+TrainCaseName = 'SolarAllDataM3FFT_DWT'
 
 # Parameters
 LR = 0.0001
 BATCH_SIZE = 128
 N_EPOCH = 50
-
+X_train = None
+y_train = None
+X_test = None
+y_test = None
+yc_train = None
+yc_test = None
+yScaler = None
+xScaler = None
+input_dim = None
+feature_size = None
+output_dim = None
 # Load data
-if TrainCaseName == 'WindFFT':
-    #Train Data
-    X_train = np.load(ProcessedFilesDir + "WindBaseTrain.npy", allow_pickle=True)
-    y_train = np.load(ProcessedFilesDir + "WindTargetTrain.npy", allow_pickle=True)
-    #Test Data
-    X_test = np.load(ProcessedFilesDir + "WindBaseTest.npy", allow_pickle=True)
-    y_test = np.load(ProcessedFilesDir + "WindTargetTest.npy", allow_pickle=True)
-    #Full Data
-    yc_train = np.load(ProcessedFilesDir + "WindFullTrain.npy", allow_pickle=True)
-    yc_test = np.load(ProcessedFilesDir + "WindFullTest.npy", allow_pickle=True)
 
-    yScaler = "WindTargetValueScaler.pkl"
-    xScaler = "WindBaseValueScaler.pkl"
-
-
+if TrainCaseName is not None:
+    #Train Data 8 objects
+    X_train     = np.load(ProcessedFilesDir + TrainCaseName + "_" + "X_train.npy", allow_pickle=True)
+    y_train     = np.load(ProcessedFilesDir + TrainCaseName + "_" + "y_train.npy", allow_pickle=True)
+    X_test      = np.load(ProcessedFilesDir + TrainCaseName + "_" + "X_test.npy", allow_pickle=True)
+    y_test      = np.load(ProcessedFilesDir + TrainCaseName + "_" + "y_test.npy", allow_pickle=True)
+    yc_train    = np.load(ProcessedFilesDir + TrainCaseName + "_" + "yc_train.npy", allow_pickle=True)
+    yc_test     = np.load(ProcessedFilesDir + TrainCaseName + "_" + "yc_test.npy", allow_pickle=True)
+    yScaler     = ProcessedFilesDir + TrainCaseName + "_" + "TargetValueScaler.pkl"
+    xScaler     = ProcessedFilesDir + TrainCaseName + "_" + "BaseValueScaler.pkl"
 else:
     X_train = np.load("X_train.npy", allow_pickle=True)
     y_train = np.load("y_train.npy", allow_pickle=True)
-
     X_test = np.load("X_test.npy", allow_pickle=True)
     y_test = np.load("y_test.npy", allow_pickle=True)
-
     yc_train = np.load("yc_train.npy", allow_pickle=True)
     yc_test = np.load("yc_test.npy", allow_pickle=True)
-
     yScaler = 'y_scaler.pkl'
     xScaler = 'X_scaler.pkl'
-
-print(y_train)
 
 input_dim = X_train.shape[1]
 feature_size = X_train.shape[2]
 output_dim = y_train.shape[1]
-
 
 #######################################################################################################################
 def plotResult():
@@ -75,7 +77,6 @@ def plotResult():
     test_with2020_RMSE = plot_testdataset_with2020_result(X_test, y_test)
     print("----- Test_RMSE_LSTM_with2020 -----", test_with2020_RMSE)
     return
-
 
 #######################################################################################################################
 def basic_GRU(input_dim, output_dim, feature_size) -> tf.keras.models.Model:
@@ -235,13 +236,12 @@ def plot_testdataset_with2020_result(X_test, y_test):
 
     return RMSE
 
+########################################################################################################################
 
 model = basic_GRU(input_dim, output_dim, feature_size)
 print(model.summary())
-model.save(ModelFileDir + 'GRU_30to3.h5')
-
+model.save(ModelFileDir + TrainCaseName + '_' + 'GRU_30to1.h5')
 yhat = model.predict(X_test, verbose=0)
 # print(yhat)
-#오류 나옴 숫자크기
 rmse = sqrt(mean_squared_error(y_test, yhat))
 #print(rmse)
