@@ -107,6 +107,11 @@ def init():
     ####
 
     ####
+    if dataFileExists("BelgiumAllDataM3.csv") is False:
+        print(">Download Wind+Solar data From Belgium Energy All DB For 3 Month...")
+        dl.dataLoadSQL(sqlList.sqlTextBelgiumEnergyAllM3, base_dir + "BelgiumAllDataM3.csv", indexSet=False)
+
+
     if dataFileExists("BelgiumAllData.csv") is False:
         print(">Download Wind+Solar data From Belgium Energy All DB...")
         dl.dataLoadSQL(sqlList.sqlTextBelgiumEnergyAll, base_dir + "BelgiumAllData.csv", indexSet=False)
@@ -300,6 +305,7 @@ def main():
     fftSave("WindAllDataY1")
     fftSave("WindAllDataY2")
 
+    fftSave("BelgiumAllDataM3")
 
 
 def fftDataProcess(df, filename):
