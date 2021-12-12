@@ -25,6 +25,14 @@ ModelFileDir="./ModelSaves/"
 
 ######################################################################################################################
 TrainCaseName = 'SolarAllDataM3FFT'
+#TrainCaseName = 'SolarAllDataM3FFT_DWT'
+
+#TrainCaseName = 'WindAllDataM3FFT'
+#TrainCaseName = 'WindAllDataM3FFT_DWT'
+
+#TrainCaseName = 'BeligumAllDataM3FFT'
+#TrainCaseName = 'BeligumAllDataM3FFT_DWT'
+
 # Parameters
 LR = 0.0001
 BATCH_SIZE = 128
@@ -103,6 +111,7 @@ def plot_traindataset_result(X_train, y_train):
     plt.legend(("Real Value", "Predicted Value"), loc="upper left", fontsize=16)
     plt.title("The result of Train", fontsize=20)
     plt.show()
+    plt.savefig('./PICS/'+TrainCaseName +  '_traindataset.png')
 
     # Calculate RMSE
     predicted = predict_result["predict_mean"]
@@ -154,55 +163,13 @@ def plot_testdataset_result(X_test, y_test):
     plt.legend(("Real Value", "Predicted Value"), loc="upper left", fontsize=16)
     plt.title("The result of Testing", fontsize=20)
     plt.show()
+    plt.savefig('./PICS/' + TrainCaseName + '_testdataset.png')
 
     # Calculate RMSE
     predicted = predict_result["predicted_mean"]
     real = real_PW["real_mean"]
     RMSE = np.sqrt(mean_squared_error(predicted, real))
     #print('-- Test RMSE -- ', RMSE)
-    return RMSE
-
-
-def plot_testdataset_with2020_result(X_test, y_test):
-    test_yhat = model.predict(X_test, 1, verbose=0)
-
-    y_scaler = load(open(yScaler, 'rb'))
-    test_predict_index = np.load(ProcessedFilesDir + TrainCaseName + "_" +"test_predict_index.npy", allow_pickle=True)
-
-    rescaled_real_y = y_scaler.inverse_transform(y_test)
-    rescaled_predicted_y = y_scaler.inverse_transform(test_yhat)
-
-    predict_result = pd.DataFrame()
-    for i in range(rescaled_predicted_y.shape[0]):
-        y_predict = pd.DataFrame(rescaled_predicted_y[i], columns=["predicted_PW"],
-                                 index=test_predict_index[i:i + output_dim])
-        predict_result = pd.concat([predict_result, y_predict], axis=1, sort=False)
-
-    real_PW = pd.DataFrame()
-    for i in range(rescaled_real_y.shape[0]):
-        y_train = pd.DataFrame(rescaled_real_y[i], columns=["real_PW"],
-                               index=test_predict_index[i:i + output_dim])
-        real_PW = pd.concat([real_PW, y_train], axis=1, sort=False)
-
-    predict_result['predicted_mean'] = predict_result.mean(axis=1)
-    real_PW['real_mean'] = real_PW.mean(axis=1)
-
-    # Plot the predicted result
-    plt.figure(figsize=(16, 8))
-    plt.plot(real_PW["real_mean"])
-    plt.plot(predict_result["predicted_mean"], color='r')
-    plt.xlabel("Date")
-    plt.ylabel("value trend")
-    plt.legend(("Real Value", "Predicted Value"), loc="upper left", fontsize=16)
-    plt.title("The result of Testing with 2020", fontsize=20)
-    plt.show()
-
-    # Calculate RMSE
-    predicted = predict_result["predicted_mean"]
-    real = real_PW["real_mean"]
-    RMSE = np.sqrt(mean_squared_error(predicted, real))
-    #print('-- Test RMSE with 2020 -- ', RMSE)
-
     return RMSE
 
 ########################################################################################################################
@@ -213,14 +180,4 @@ print("----- Train_RMSE_LSTM -----", train_RMSE)
 test_RMSE = plot_testdataset_result(X_test, y_test)
 print("----- Test_RMSE_LSTM -----", test_RMSE)
 
-test_with2020_RMSE = plot_testdataset_with2020_result(X_test, y_test)
-print("----- Test_RMSE_LSTM_with2020 -----", test_with2020_RMSE)
 
-train_RMSE = plot_traindataset_result(X_train, y_train)
-print("----- Train_RMSE_LSTM -----", train_RMSE)
-
-test_RMSE = plot_testdataset_result(X_test, y_test)
-print("----- Test_RMSE_LSTM -----", test_RMSE)
-
-test_with2020_RMSE = plot_testdataset_with2020_result(X_test, y_test)
-print("----- Test_RMSE_LSTM_with2020 -----", test_with2020_RMSE)

@@ -143,6 +143,7 @@ sqlTextBelgiumEnergyAll = "SELECT SUBSTR(TIME_ID,1,12) AS DATE," \
           "AND TIME_ID BETWEEN '20160101' AND '20210401' "
 
 
+
 sqlTextBelgiumEnergyAllM3 = "SELECT SUBSTR(TIME_ID,1,12) AS DATE," \
           "	SOLAR_PW + WIND_PW AS PW," \
           "	SOLAR_PW_CAPA + WIND_PW_CAPA AS CAPA," \
