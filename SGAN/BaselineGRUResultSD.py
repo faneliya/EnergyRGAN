@@ -138,11 +138,6 @@ def plot_testdataset_result(X_test, y_test):
     predict_result['predicted_mean'] = predict_result.mean(axis=1)
     real_PW['real_mean'] = real_PW.mean(axis=1)
 
-    Input_Before = '2020-01-01'
-    predict_result = predict_result.loc[predict_result.index < Input_Before]
-    real_PW = real_PW.loc[real_PW.index < Input_Before]
-
-    print(predict_result.tail(10))
 
     # Plot the predicted result
     plt.figure(figsize=(16, 8))
