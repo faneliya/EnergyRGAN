@@ -13,8 +13,8 @@ from pickle import dump
 
 DataFilesDir="./DataFiles/"
 ProcessedFilesDir="./ProcessedFiles/"
-STD_BASE_TIME_TIC = 2880
-STD_TARGET_TIME_TIC = 96
+STD_BASE_TIME_TIC = 240
+STD_TARGET_TIME_TIC = 8
 
 
 def dataProcessByFile(fileName):
