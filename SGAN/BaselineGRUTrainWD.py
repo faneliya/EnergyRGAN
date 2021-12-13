@@ -25,9 +25,9 @@ ModelFileDir="./ModelSaves/"
 ######################################################################################################################
 #TrainCaseName = 'SolarAllDataM3FFT'
 #TrainCaseName = 'SolarAllDataM3FFT_DWT'
+#TrainCaseName = 'WindAllDataM3FFT_DWT'
 #TrainCaseName = 'WindAllDataM3FFT'
-TrainCaseName = 'WindAllDataM3FFT_DWT'
-#TrainCaseName = 'BelgiumAllDataM3FFT'
+TrainCaseName = 'BelgiumAllDataM3FFT'
 #TrainCaseName = 'BelgiumAllDataM3FFT_DWT'
 
 # Parameters
@@ -88,11 +88,12 @@ def basic_GRU(input_dim, output_dim, feature_size) -> tf.keras.models.Model:
 
     pyplot.plot(history.history['loss'], label='train')
     pyplot.plot(history.history['val_loss'], label='validation')
-    pyplot.title(TrainCaseName + " GRM : loss/val_loss", fontsize=20)
+    pyplot.title(TrainCaseName + " GRU : loss/val_loss", fontsize=16)
     pyplot.legend()
     pyplot.tight_layout()
-    pyplot.show()
     pyplot.savefig('./PICS/'+TrainCaseName + '_GRM_lossResult.png')
+    pyplot.show()
+
 
     return model
 ########################################################################################################################

@@ -25,10 +25,10 @@ ModelFileDir="./ModelSaves/"
 
 ######################################################################################################################
 #TrainCaseName = 'SolarAllDataM3FFT'
-TrainCaseName = 'SolarAllDataM3FFT_DWT'
+#TrainCaseName = 'SolarAllDataM3FFT_DWT'
 
 #TrainCaseName = 'WindAllDataM3FFT'
-#TrainCaseName = 'WindAllDataM3FFT_DWT'
+TrainCaseName = 'WindAllDataM3FFT_DWT'
 
 #TrainCaseName = 'BeligumAllDataM3FFT'
 #TrainCaseName = 'BelgiumAllDataM3FFT_DWT'
@@ -109,8 +109,8 @@ def plot_traindataset_result(X_train, y_train):
     plt.legend(("Real Value", "Predicted Value"), loc="upper left", fontsize=16)
     plt.title(TrainCaseName + " GRU : result of Training, RMSE=" + str(RMSE), fontsize=16)
     plt.tight_layout()
-    plt.show()
     plt.savefig('./PICS/'+TrainCaseName + '_GRU_traindataset.png')
+    plt.show()
 
     # Calculate RMSE
     print('-- Train RMSE -- ', RMSE)
@@ -161,8 +161,9 @@ def plot_testdataset_result(X_test, y_test):
     plt.legend(("Real Value", "Predicted Value"), loc="upper left", fontsize=16)
     plt.title(TrainCaseName + " GRU : result of Training, RMSE=" + str(RMSE), fontsize=16)
     plt.tight_layout()
-    plt.show()
     plt.savefig('./PICS/'+TrainCaseName + '_GRU_testdataset.png')
+    plt.show()
+
 
     print('-- Test RMSE -- ', RMSE)
     return RMSE
