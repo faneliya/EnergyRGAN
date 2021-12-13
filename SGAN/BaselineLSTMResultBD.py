@@ -1,42 +1,38 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-import tensorflow as tf
+import tensorflow
+
 from numpy import *
 from math import sqrt
 from pandas import *
 from datetime import datetime, timedelta
+
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.metrics import mean_squared_error
+
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, Bidirectional
 from tensorflow.keras.layers import BatchNormalization, Embedding, TimeDistributed, LeakyReLU
-from tensorflow.keras.layers import GRU, LSTM
+from tensorflow.keras.layers import LSTM, GRU
 from tensorflow.keras.optimizers import Adam
+
 from matplotlib import pyplot
 from pickle import load
-import tensorflow
 
+######################################################################################################################
 # Constant Settings
 DataFilesDir="./DataFiles/"
 ProcessedFilesDir="./ProcessedFiles/"
 ModelFileDir="./ModelSaves/"
 
-######################################################################################################################
 #TrainCaseName = 'SolarAllDataM3FFT'
 #TrainCaseName = 'SolarAllDataM3FFT_DWT'
-
 #TrainCaseName = 'WindAllDataM3FFT'
 #TrainCaseName = 'WindAllDataM3FFT_DWT'
-
-#TrainCaseName = 'BeligumAllDataM3FFT'
-TrainCaseName = 'BelgiumAllDataM3FFT_DWT'
-
-# Parameters
-LR = 0.0001
-BATCH_SIZE = 128
-N_EPOCH = 50
+#TrainCaseName = 'BelgiumAllDataM3FFT'
+TrainCaseName = 'BelgumAllDataM3FFT_DWT'
 
 if TrainCaseName is not None:
     #Train Data 8 objects
@@ -58,16 +54,20 @@ else:
     yScaler = 'y_scaler.pkl'
     xScaler = 'X_scaler.pkl'
 
+#Parameters
+LR = 0.001
+BATCH_SIZE = 64
+N_EPOCH = 50
+
 input_dim = X_train.shape[1]
 feature_size = X_train.shape[2]
 output_dim = y_train.shape[1]
 
+model= tensorflow.keras.models.load_model(ModelFileDir + TrainCaseName + '_' +'LSTM_3to1.h5')
+print(model.summary())
+print("LSTM PREDICT PROCESSING......" + TrainCaseName )
 
-model = tensorflow.keras.models.load_model(ModelFileDir + TrainCaseName + '_' + 'GRU_30to1.h5')
-print("PREDICT PROCESSING......" + TrainCaseName )
 
-# %% --------------------------------------- Plot the result  -----------------------------------------------------------------
-## TRAIN DATA
 def plot_traindataset_result(X_train, y_train):
 
     print(TrainCaseName + "Predicting Data...START")
@@ -96,6 +96,10 @@ def plot_traindataset_result(X_train, y_train):
     predict_result["PREDICTED_MEAN"] = predict_result.mean(axis=1)
     real_value["REAL_MEAN"] = real_value.mean(axis=1)
 
+    predicted = predict_result["PREDICTED_MEAN"]
+    real = real_value["REAL_MEAN"]
+    RMSE = np.sqrt(mean_squared_error(predicted, real))
+
     # Plot the predicted result
     plt.figure(figsize=(16, 8))
     plt.plot(real_value["REAL_MEAN"])
@@ -103,21 +107,16 @@ def plot_traindataset_result(X_train, y_train):
     plt.xlabel("DATE")
     plt.ylabel("Real Value")
     plt.legend(("Real Value", "Predicted Value"), loc="upper left", fontsize=16)
-    plt.title(TrainCaseName + " : result of Training", fontsize=20)
+    plt.title(TrainCaseName + " LSTM : result of traindataset, RMSE=" + str(RMSE), fontsize=20)
     plt.tight_layout()
     plt.show()
-    plt.savefig('./PICS/'+TrainCaseName + '_traindataset.png')
+    plt.savefig('./PICS/'+TrainCaseName + 'LSTM_traindataset.png')
 
-    # Calculate RMSE
-    predicted = predict_result["PREDICTED_MEAN"]
-    real = real_value["REAL_MEAN"]
-    RMSE = np.sqrt(mean_squared_error(predicted, real))
     print('-- Train RMSE -- ', RMSE)
 
     return RMSE
 
 
-# %% --------------------------------------- Plot the result  ----
 def plot_testdataset_result(X_test, y_test):
 
     print(TrainCaseName + "Predicting Data...START")
@@ -146,6 +145,10 @@ def plot_testdataset_result(X_test, y_test):
     predict_result["PREDICTED_MEAN"] = predict_result.mean(axis=1)
     real_value["REAL_MEAN"] = real_value.mean(axis=1)
 
+    predicted = predict_result["PREDICTED_MEAN"]
+    real = real_value["REAL_MEAN"]
+    RMSE = np.sqrt(mean_squared_error(predicted, real))
+
     # Plot the predicted result
     plt.figure(figsize=(16, 8))
     plt.plot(real_value["REAL_MEAN"])
@@ -153,10 +156,10 @@ def plot_testdataset_result(X_test, y_test):
     plt.xlabel("DATE")
     plt.ylabel("Real Value")
     plt.legend(("Real Value", "Predicted Value"), loc="upper left", fontsize=16)
-    plt.title(TrainCaseName + " : result of Training", fontsize=20)
+    plt.title(TrainCaseName + " LSTM : result of testdataset, RMSE=" + str(RMSE), fontsize=20)
     plt.tight_layout()
     plt.show()
-    plt.savefig('./PICS/'+TrainCaseName + '_testdataset.png')
+    plt.savefig('./PICS/'+TrainCaseName + 'LSTM_testdataset.png')
 
     # Calculate RMSE
     predicted = predict_result["PREDICTED_MEAN"]
@@ -165,12 +168,12 @@ def plot_testdataset_result(X_test, y_test):
     print('-- Test RMSE -- ', RMSE)
     return RMSE
 
-########################################################################################################################
 
 train_RMSE = plot_traindataset_result(X_train, y_train)
 print("----- Train_RMSE_LSTM -----", train_RMSE)
 
 test_RMSE = plot_testdataset_result(X_test, y_test)
 print("----- Test_RMSE_LSTM -----", test_RMSE)
+
 
 

@@ -67,8 +67,8 @@ output_dim = y_train.shape[1]
 ####
 def basic_lstm(input_dim, feature_size):
     model = Sequential()
-    model.add(Bidirectional(LSTM(units= 128), input_shape=(input_dim, feature_size)))
-    model.add(Dense(64))
+    model.add(Bidirectional(LSTM(units= 256), input_shape=(input_dim, feature_size)))
+    model.add(Dense(128))
     model.add(Dense(units=output_dim))
     model.compile(optimizer=Adam(lr = LR), loss='mse')
     history = model.fit(X_train, y_train, epochs=N_EPOCH, batch_size=BATCH_SIZE, validation_data=(X_test, y_test),

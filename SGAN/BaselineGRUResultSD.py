@@ -62,13 +62,17 @@ input_dim = X_train.shape[1]
 feature_size = X_train.shape[2]
 output_dim = y_train.shape[1]
 
+
 model = tensorflow.keras.models.load_model(ModelFileDir + TrainCaseName + '_' + 'GRU_30to1.h5')
 print("PREDICT PROCESSING......" + TrainCaseName )
 
 # %% --------------------------------------- Plot the result  -----------------------------------------------------------------
 ## TRAIN DATA
 def plot_traindataset_result(X_train, y_train):
+
+    print(TrainCaseName + "Predicting Data...START")
     train_yhat = model.predict(X_train, verbose=0)
+    print(TrainCaseName + "Predicting Data...END")
 
     y_scaler = load(open(yScaler, 'rb'))
     train_predict_index = np.load(ProcessedFilesDir + TrainCaseName + "_"
@@ -79,34 +83,34 @@ def plot_traindataset_result(X_train, y_train):
 
     predict_result = pd.DataFrame()
     for i in range(rescaled_predicted_y.shape[0]):
-        y_predict = pd.DataFrame(rescaled_predicted_y[i], columns=["predict_PW"],
+        y_predict = pd.DataFrame(rescaled_predicted_y[i], columns=["PREDICT_VALUE"],
                                  index=train_predict_index[i:i + output_dim])
         predict_result = pd.concat([predict_result, y_predict], axis=1, sort=False)
 
-    real_PW = pd.DataFrame()
+    real_value = pd.DataFrame()
     for i in range(rescaled_real_y.shape[0]):
-        y_train = pd.DataFrame(rescaled_real_y[i], columns=["real_PW"],
+        y_train = pd.DataFrame(rescaled_real_y[i], columns=["REAL_VALUE"],
                                index=train_predict_index[i:i + output_dim])
-        real_PW = pd.concat([real_PW, y_train], axis=1, sort=False)
+        real_value = pd.concat([real_value, y_train], axis=1, sort=False)
 
-    predict_result['predict_mean'] = predict_result.mean(axis=1)
-    real_PW['real_mean'] = real_PW.mean(axis=1)
+    predict_result["PREDICTED_MEAN"] = predict_result.mean(axis=1)
+    real_value["REAL_MEAN"] = real_value.mean(axis=1)
 
     # Plot the predicted result
     plt.figure(figsize=(16, 8))
-    plt.plot(real_PW["Real_mean"])
-    plt.plot(predict_result["predict_mean"], color='r')
-    plt.xlabel("Date")
-    plt.ylabel("value trend")
+    plt.plot(real_value["REAL_MEAN"])
+    plt.plot(predict_result["PREDICTED_MEAN"], color='r')
+    plt.xlabel("DATE")
+    plt.ylabel("Real Value")
     plt.legend(("Real Value", "Predicted Value"), loc="upper left", fontsize=16)
-    plt.title("The result of Train", fontsize=20)
+    plt.title(TrainCaseName + " : result of Training", fontsize=20)
+    plt.tight_layout()
     plt.show()
-    plt.savefig('./PICS/'+TrainCaseName +  '_traindataset.png')
+    plt.savefig('./PICS/'+TrainCaseName + '_traindataset.png')
 
     # Calculate RMSE
-    predicted = predict_result["predict_mean"]
-    real = real_PW["Real_mean"]
-    For_MSE = pd.concat([predicted, real], axis=1)
+    predicted = predict_result["PREDICTED_MEAN"]
+    real = real_value["REAL_MEAN"]
     RMSE = np.sqrt(mean_squared_error(predicted, real))
     print('-- Train RMSE -- ', RMSE)
 
@@ -115,7 +119,11 @@ def plot_traindataset_result(X_train, y_train):
 
 # %% --------------------------------------- Plot the result  ----
 def plot_testdataset_result(X_test, y_test):
+
+    print(TrainCaseName + "Predicting Data...START")
     test_yhat = model.predict(X_test, verbose=0)
+    print(TrainCaseName + "Predicting Data...END")
+
     y_scaler = load(open(yScaler, 'rb'))
     test_predict_index = np.load(ProcessedFilesDir + TrainCaseName + "_"
                                  +"test_predict_index.npy", allow_pickle=True)
@@ -125,34 +133,34 @@ def plot_testdataset_result(X_test, y_test):
 
     predict_result = pd.DataFrame()
     for i in range(rescaled_predicted_y.shape[0]):
-        y_predict = pd.DataFrame(rescaled_predicted_y[i], columns=["predicted_PW"],
+        y_predict = pd.DataFrame(rescaled_predicted_y[i], columns=["PREDICT_VALUE"],
                                  index=test_predict_index[i:i + output_dim])
         predict_result = pd.concat([predict_result, y_predict], axis=1, sort=False)
 
-    real_PW = pd.DataFrame()
+    real_value = pd.DataFrame()
     for i in range(rescaled_real_y.shape[0]):
-        y_train = pd.DataFrame(rescaled_real_y[i], columns=["real_PW"],
+        y_train = pd.DataFrame(rescaled_real_y[i], columns=["REAL_VALUE"],
                                index=test_predict_index[i:i + output_dim])
-        real_PW = pd.concat([real_PW, y_train], axis=1, sort=False)
+        real_value = pd.concat([real_value, y_train], axis=1, sort=False)
 
-    predict_result['predicted_mean'] = predict_result.mean(axis=1)
-    real_PW['real_mean'] = real_PW.mean(axis=1)
-
+    predict_result["PREDICTED_MEAN"] = predict_result.mean(axis=1)
+    real_value["REAL_MEAN"] = real_value.mean(axis=1)
 
     # Plot the predicted result
     plt.figure(figsize=(16, 8))
-    plt.plot(real_PW["real_mean"])
-    plt.plot(predict_result["predicted_mean"], color='r')
-    plt.xlabel("Date")
-    plt.ylabel("value trend")
+    plt.plot(real_value["REAL_MEAN"])
+    plt.plot(predict_result["PREDICTED_MEAN"], color='r')
+    plt.xlabel("DATE")
+    plt.ylabel("Real Value")
     plt.legend(("Real Value", "Predicted Value"), loc="upper left", fontsize=16)
-    plt.title("The result of Testing", fontsize=20)
+    plt.title(TrainCaseName + " : result of Training", fontsize=20)
+    plt.tight_layout()
     plt.show()
-    plt.savefig('./PICS/' + TrainCaseName + '_testdataset.png')
+    plt.savefig('./PICS/'+TrainCaseName + '_testdataset.png')
 
     # Calculate RMSE
-    predicted = predict_result["predicted_mean"]
-    real = real_PW["real_mean"]
+    predicted = predict_result["PREDICTED_MEAN"]
+    real = real_value["REAL_MEAN"]
     RMSE = np.sqrt(mean_squared_error(predicted, real))
     print('-- Test RMSE -- ', RMSE)
     return RMSE
