@@ -10,12 +10,39 @@ from tensorflow.keras import Sequential
 from pickle import load
 from sklearn.metrics import mean_squared_error
 
-X_train = np.load("X_train.npy", allow_pickle=True)
-y_train = np.load("y_train.npy", allow_pickle=True)
-X_test = np.load("X_test.npy", allow_pickle=True)
-y_test = np.load("y_test.npy", allow_pickle=True)
-yc_train = np.load("yc_train.npy", allow_pickle=True)
-yc_test = np.load("yc_test.npy", allow_pickle=True)
+
+# Constant Settings
+DataFilesDir="./DataFiles/"
+ProcessedFilesDir="./ProcessedFiles/"
+ModelFileDir="./ModelSaves/"
+
+######################################################################################################################
+#TrainCaseName = 'SolarAllDataM3FFT'
+#TrainCaseName = 'SolarAllDataM3FFT_DWT'
+#TrainCaseName = 'WindAllDataM3FFT'
+#TrainCaseName = 'WindAllDataM3FFT_DWT'
+#TrainCaseName = 'BeligumAllDataM3FFT'
+TrainCaseName = 'BeligumAllDataM3FFT_DWT'
+
+if TrainCaseName is not None:
+    #Train Data 8 objects
+    X_train     = np.load(ProcessedFilesDir + TrainCaseName + "_" + "X_train.npy", allow_pickle=True)
+    y_train     = np.load(ProcessedFilesDir + TrainCaseName + "_" + "y_train.npy", allow_pickle=True)
+    X_test      = np.load(ProcessedFilesDir + TrainCaseName + "_" + "X_test.npy", allow_pickle=True)
+    y_test      = np.load(ProcessedFilesDir + TrainCaseName + "_" + "y_test.npy", allow_pickle=True)
+    yc_train    = np.load(ProcessedFilesDir + TrainCaseName + "_" + "yc_train.npy", allow_pickle=True)
+    yc_test     = np.load(ProcessedFilesDir + TrainCaseName + "_" + "yc_test.npy", allow_pickle=True)
+    yScaler     = ProcessedFilesDir + TrainCaseName + "_" + "TargetValueScaler.pkl"
+    xScaler     = ProcessedFilesDir + TrainCaseName + "_" + "BaseValueScaler.pkl"
+else:
+    X_train = np.load("X_train.npy", allow_pickle=True)
+    y_train = np.load("y_train.npy", allow_pickle=True)
+    X_test = np.load("X_test.npy", allow_pickle=True)
+    y_test = np.load("y_test.npy", allow_pickle=True)
+    yc_train = np.load("yc_train.npy", allow_pickle=True)
+    yc_test = np.load("yc_test.npy", allow_pickle=True)
+    yScaler = 'y_scaler.pkl'
+    xScaler = 'X_scaler.pkl'
 
 
 def make_generator_model(input_dim, output_dim, feature_size) -> tf.keras.models.Model:
@@ -33,6 +60,7 @@ def make_generator_model(input_dim, output_dim, feature_size) -> tf.keras.models
     model.add(Dense(units=output_dim))
     return model
 
+
 def make_discriminator_model():
 
     cnn_net = tf.keras.Sequential()
@@ -46,9 +74,6 @@ def make_discriminator_model():
     cnn_net.add(Dense(1, activation='sigmoid'))
     return cnn_net
 
-
-model = make_discriminator_model()
-print(model.summary())
 
 
 class GAN:
@@ -115,19 +140,19 @@ class GAN:
         for epoch in range(epochs):
             start = time.time()
 
-            real_price, fake_price, loss = self.train_step(real_x, real_y, yc)
+            real_value, fake_price, loss = self.train_step(real_x, real_y, yc)
 
             G_losses = []
             D_losses = []
 
-            Real_price = []
-            Predicted_price = []
+            RealValue = []
+            PredictedValue = []
 
             D_losses.append(loss['d_loss'].numpy())
             G_losses.append(loss['g_loss'].numpy())
 
-            Predicted_price.append(fake_price.numpy())
-            Real_price.append(real_price.numpy())
+            PredictedValue.append(fake_price.numpy())
+            RealValue.append(real_value.numpy())
 
             # Save the model every 15 epochs
             if (epoch + 1) % 15 == 0:
@@ -142,11 +167,15 @@ class GAN:
             train_hist['G_losses'].append(G_losses)
             train_hist['per_epoch_times'].append(per_epoch_ptime)
 
+        ###########################################################################
+        tf.keras.models.save_model(generator, ModelFileDir + TrainCaseName + '_' + 'GanGeneratorModel.h5')
+        ##########################################################################
+
         # Reshape the predicted result & real
-        Predicted_price = np.array(Predicted_price)
-        Predicted_price = Predicted_price.reshape(Predicted_price.shape[1], Predicted_price.shape[2])
-        Real_price = np.array(Real_price)
-        Real_price = Real_price.reshape(Real_price.shape[1], Real_price.shape[2])
+        PredictedValue = np.array(PredictedValue)
+        PredictedValue = PredictedValue.reshape(PredictedValue.shape[1], PredictedValue.shape[2])
+        RealValue = np.array(RealValue)
+        RealValue = RealValue.reshape(RealValue.shape[1], RealValue.shape[2])
 
         plt.plot(train_hist['D_losses'], label='D_loss')
         plt.plot(train_hist['G_losses'], label='G_loss')
@@ -155,11 +184,60 @@ class GAN:
         plt.legend()
         plt.show()
 
-        return Predicted_price, Real_price, np.sqrt(mean_squared_error(Real_price, Predicted_price)) / np.mean(
-            Real_price)
+        return PredictedValue, RealValue, np.sqrt(mean_squared_error(RealValue, PredictedValue)) / np.mean(RealValue)
+
+
+## TRAIN DATA
+def plot_traindataset_result(RealValue, PredictedValue):
+    # Rescale back the real dataset
+    X_scaler = load(open(xScaler, 'rb'))
+    y_scaler = load(open(yScaler, 'rb'))
+    train_predict_index = np.load(ProcessedFilesDir + TrainCaseName + "_"
+                                  + "train_predict_index.npy",  allow_pickle=True)
+    test_predict_index = np.load(ProcessedFilesDir + TrainCaseName + "_"
+                                 + "test_predict_index.npy", allow_pickle=True)
+    # dataset_train = pd.read_csv('dataset_train.csv', index_col=0)
+
+    rescaled_RealValue = y_scaler.inverse_transform(RealValue)
+    rescaled_PredictedValue = y_scaler.inverse_transform(PredictedValue)
+
+    print("----- rescaled predicted price -----", rescaled_PredictedValue)
+    print("----- SHAPE rescaled predicted price -----", rescaled_PredictedValue.shape)
+
+    predict_result = pd.DataFrame()
+    for i in range(rescaled_PredictedValue.shape[0]):
+        y_predict = pd.DataFrame(rescaled_PredictedValue[i], columns=["PREDICTED_VALUE"],
+                                 index=train_predict_index[i:i + output_dim])
+        predict_result = pd.concat([predict_result, y_predict], axis=1, sort=False)
+    #
+    real_value = pd.DataFrame()
+    for i in range(rescaled_RealValue.shape[0]):
+        y_train = pd.DataFrame(rescaled_RealValue[i], columns=["REAL_VALUE"],
+                               index=train_predict_index[i:i + output_dim])
+        real_value = pd.concat([real_value, y_train], axis=1, sort=False)
+
+    predict_result['PREDICTED_MEAN'] = predict_result.mean(axis=1)
+    real_value['REAM_MEAN'] = real_value.mean(axis=1)
+
+    # Plot the predicted result
+    plt.figure(figsize=(16, 8))
+    plt.plot(real_value["REAM_MEAN"])
+    plt.plot(predict_result["PREDICTED_MEAN"], color='r')
+    plt.xlabel("DATE")
+    plt.ylabel("Real Value")
+    plt.legend(("Real Value", "Predicted Value"), loc="upper left", fontsize=16)
+    plt.title(TrainCaseName + " : result of Training", fontsize=20)
+    plt.show()
+
+    # Calculate RMSE
+    predicted = predict_result["PREDICTED_MEAN"]
+    real = real_value["REAM_MEAN"]
+    RMSE = np.sqrt(mean_squared_error(predicted, real))
+    print('-- Train RMSE -- ', RMSE)
 
 
 if __name__ == '__main__':
+
     input_dim = X_train.shape[1]
     feature_size = X_train.shape[2]
     output_dim = y_train.shape[1]
@@ -167,55 +245,24 @@ if __name__ == '__main__':
     ## For Bayesian
     opt = {"lr": 0.00016, "epoch": 165, 'bs': 128}
 
+    print('#GAN-Discriminator Model------------------------------------')
+    showDiscrimModel = make_discriminator_model()
+    print(showDiscrimModel.summary())
+    print('#GAN-Generator Model------------------------------------')
+    showGanModel = make_generator_model()
+    print(showGanModel.summary())
+
+    ##################### Building Models #########################################
     generator = make_generator_model(X_train.shape[1], output_dim, X_train.shape[2])
     discriminator = make_discriminator_model()
     gan = GAN(generator, discriminator, opt)
-    Predicted_price, Real_price, RMSPE = gan.train(X_train, y_train, yc_train, opt)
 
-# %% --------------------------------------- Plot the result  -----------------------------------------------------------------
+    PredictedValue, RealValue, RMSPE = gan.train(X_train, y_train, yc_train, opt)
+    ###############################################################################
 
-# Rescale back the real dataset
-X_scaler = load(open('X_scaler.pkl', 'rb'))
-y_scaler = load(open('y_scaler.pkl', 'rb'))
-train_predict_index = np.load("train_predict_index.npy", allow_pickle=True)
-test_predict_index = np.load("test_predict_index.npy", allow_pickle=True)
-#dataset_train = pd.read_csv('dataset_train.csv', index_col=0)
-
-
-print("----- predicted price -----", Predicted_price)
-
-rescaled_Real_price = y_scaler.inverse_transform(Real_price)
-rescaled_Predicted_price = y_scaler.inverse_transform(Predicted_price)
-
-print("----- rescaled predicted price -----", rescaled_Predicted_price)
-print("----- SHAPE rescaled predicted price -----", rescaled_Predicted_price.shape)
-
-predict_result = pd.DataFrame()
-for i in range(rescaled_Predicted_price.shape[0]):
-    y_predict = pd.DataFrame(rescaled_Predicted_price[i], columns=["predicted_price"], index=train_predict_index[i:i+output_dim])
-    predict_result = pd.concat([predict_result, y_predict], axis=1, sort=False)
-#
-real_price = pd.DataFrame()
-for i in range(rescaled_Real_price.shape[0]):
-    y_train = pd.DataFrame(rescaled_Real_price[i], columns=["real_price"], index=train_predict_index[i:i+output_dim])
-    real_price = pd.concat([real_price, y_train], axis=1, sort=False)
-
-predict_result['predicted_mean'] = predict_result.mean(axis=1)
-real_price['real_mean'] = real_price.mean(axis=1)
-
-# Plot the predicted result
-plt.figure(figsize=(16, 8))
-plt.plot(real_price["real_mean"])
-plt.plot(predict_result["predicted_mean"], color = 'r')
-plt.xlabel("Date")
-plt.ylabel("Wind Power")
-plt.legend(("Wind Power", "Predicted PW"), loc="upper left", fontsize=16)
-plt.title("The result of Training", fontsize=20)
-plt.show()
-
-# Calculate RMSE
-predicted = predict_result["predicted_mean"]
-real = real_price["real_mean"]
-For_MSE = pd.concat([predicted, real], axis = 1)
-RMSE = np.sqrt(mean_squared_error(predicted, real))
-print('-- Train RMSE -- ', RMSE)
+    GanModel = tf.keras.models.load_model(ModelFileDir + TrainCaseName + '_' + 'GanGeneratorModel.h5')
+    print(GanModel.summary())
+    print("PREDICT PROCESSING......" + TrainCaseName)
+    PredictedValue = GanModel.predict(X_train, verbose=0)
+    plot_traindataset_result(y_train, PredictedValue)
+    #################### Prediction Model #########################################
