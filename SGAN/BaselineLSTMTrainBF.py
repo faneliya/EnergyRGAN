@@ -80,7 +80,7 @@ def basic_lstm(input_dim, feature_size):
     pyplot.legend()
     pyplot.tight_layout()
     pyplot.show()
-    pyplot.savefig('./PICS/'+TrainCaseName + '_lossResult.png')
+    pyplot.savefig('./PICS/'+TrainCaseName + '_LSTM_lossResult.png')
 
     return model
 ####

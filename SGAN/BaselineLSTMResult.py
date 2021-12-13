@@ -156,15 +156,11 @@ def plot_testdataset_result(X_test, y_test):
     plt.xlabel("DATE")
     plt.ylabel("Real Value")
     plt.legend(("Real Value", "Predicted Value"), loc="upper left", fontsize=16)
-    plt.title(TrainCaseName + " LSTM : result of testdataset, RMSE=" + str(RMSE), fontsize=20)
+    plt.title(TrainCaseName + " LSTM : result of testdataset, RMSE=" + str(RMSE), fontsize=16)
     plt.tight_layout()
     plt.show()
     plt.savefig('./PICS/'+TrainCaseName + 'LSTM_testdataset.png')
 
-    # Calculate RMSE
-    predicted = predict_result["PREDICTED_MEAN"]
-    real = real_value["REAL_MEAN"]
-    RMSE = np.sqrt(mean_squared_error(predicted, real))
     print('-- Test RMSE -- ', RMSE)
     return RMSE
 

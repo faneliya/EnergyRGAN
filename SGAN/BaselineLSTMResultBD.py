@@ -32,7 +32,7 @@ ModelFileDir="./ModelSaves/"
 #TrainCaseName = 'WindAllDataM3FFT'
 #TrainCaseName = 'WindAllDataM3FFT_DWT'
 #TrainCaseName = 'BelgiumAllDataM3FFT'
-TrainCaseName = 'BelgumAllDataM3FFT_DWT'
+TrainCaseName = 'BelgiumAllDataM3FFT_DWT'
 
 if TrainCaseName is not None:
     #Train Data 8 objects
@@ -110,7 +110,7 @@ def plot_traindataset_result(X_train, y_train):
     plt.title(TrainCaseName + " LSTM : result of traindataset, RMSE=" + str(RMSE), fontsize=20)
     plt.tight_layout()
     plt.show()
-    plt.savefig('./PICS/'+TrainCaseName + 'LSTM_traindataset.png')
+    plt.savefig('./PICS/'+TrainCaseName + '_LSTM_traindataset.png')
 
     print('-- Train RMSE -- ', RMSE)
 
@@ -159,7 +159,7 @@ def plot_testdataset_result(X_test, y_test):
     plt.title(TrainCaseName + " LSTM : result of testdataset, RMSE=" + str(RMSE), fontsize=20)
     plt.tight_layout()
     plt.show()
-    plt.savefig('./PICS/'+TrainCaseName + 'LSTM_testdataset.png')
+    plt.savefig('./PICS/'+TrainCaseName + '_LSTM_testdataset.png')
 
     # Calculate RMSE
     predicted = predict_result["PREDICTED_MEAN"]

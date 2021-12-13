@@ -23,8 +23,12 @@ ProcessedFilesDir="./ProcessedFiles/"
 ModelFileDir="./ModelSaves/"
 
 ######################################################################################################################
+#TrainCaseName = 'SolarAllDataM3FFT'
+#TrainCaseName = 'SolarAllDataM3FFT_DWT'
+#TrainCaseName = 'WindAllDataM3FFT_DWT'
+#TrainCaseName = 'WindAllDataM3FFT_DWT'
+#TrainCaseName = 'BelgiumAllDataM3FFT'
 TrainCaseName = 'BelgiumAllDataM3FFT_DWT'
-
 
 # Parameters
 LR = 0.0001
@@ -42,7 +46,6 @@ input_dim = None
 feature_size = None
 output_dim = None
 # Load data
-
 
 if TrainCaseName is not None:
     #Train Data 8 objects
@@ -68,6 +71,7 @@ input_dim = X_train.shape[1]
 feature_size = X_train.shape[2]
 output_dim = y_train.shape[1]
 
+
 #######################################################################################################################
 def basic_GRU(input_dim, output_dim, feature_size) -> tf.keras.models.Model:
     model = Sequential()
@@ -81,19 +85,19 @@ def basic_GRU(input_dim, output_dim, feature_size) -> tf.keras.models.Model:
     model.compile(optimizer=Adam(lr=LR), loss='mse')
     history = model.fit(X_train, y_train, epochs=N_EPOCH, batch_size=BATCH_SIZE, validation_data=(X_test, y_test),
                         verbose=2, shuffle=False)
+
     pyplot.plot(history.history['loss'], label='train')
     pyplot.plot(history.history['val_loss'], label='validation')
-    pyplot.title(TrainCaseName + " GRU : loss/val_loss", fontsize=20)
+    pyplot.title(TrainCaseName + " GRM : loss/val_loss", fontsize=20)
     pyplot.legend()
     pyplot.tight_layout()
     pyplot.show()
-    pyplot.savefig('./PICS/'+TrainCaseName + '_lossResult.png')
+    pyplot.savefig('./PICS/'+TrainCaseName + '_GRM_lossResult.png')
 
     return model
-###
+########################################################################################################################
 
 
-print(TrainCaseName + '> Building Models')
 model = basic_GRU(input_dim, output_dim, feature_size)
 print(model.summary())
-model.save(ModelFileDir + TrainCaseName + '_' + 'GRU_30to1.h5')
+model.save(ModelFileDir + TrainCaseName + '_' + 'GRU_Model.h5')

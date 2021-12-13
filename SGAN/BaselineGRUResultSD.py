@@ -31,7 +31,7 @@ TrainCaseName = 'SolarAllDataM3FFT_DWT'
 #TrainCaseName = 'WindAllDataM3FFT_DWT'
 
 #TrainCaseName = 'BeligumAllDataM3FFT'
-#TrainCaseName = 'BeligumAllDataM3FFT_DWT'
+#TrainCaseName = 'BelgiumAllDataM3FFT_DWT'
 
 # Parameters
 LR = 0.0001
@@ -96,6 +96,10 @@ def plot_traindataset_result(X_train, y_train):
     predict_result["PREDICTED_MEAN"] = predict_result.mean(axis=1)
     real_value["REAL_MEAN"] = real_value.mean(axis=1)
 
+    predicted = predict_result["PREDICTED_MEAN"]
+    real = real_value["REAL_MEAN"]
+    RMSE = np.sqrt(mean_squared_error(predicted, real))
+
     # Plot the predicted result
     plt.figure(figsize=(16, 8))
     plt.plot(real_value["REAL_MEAN"])
@@ -103,15 +107,12 @@ def plot_traindataset_result(X_train, y_train):
     plt.xlabel("DATE")
     plt.ylabel("Real Value")
     plt.legend(("Real Value", "Predicted Value"), loc="upper left", fontsize=16)
-    plt.title(TrainCaseName + " : result of Training", fontsize=20)
+    plt.title(TrainCaseName + " GRU : result of Training, RMSE=" + str(RMSE), fontsize=16)
     plt.tight_layout()
     plt.show()
-    plt.savefig('./PICS/'+TrainCaseName + '_traindataset.png')
+    plt.savefig('./PICS/'+TrainCaseName + '_GRU_traindataset.png')
 
     # Calculate RMSE
-    predicted = predict_result["PREDICTED_MEAN"]
-    real = real_value["REAL_MEAN"]
-    RMSE = np.sqrt(mean_squared_error(predicted, real))
     print('-- Train RMSE -- ', RMSE)
 
     return RMSE
@@ -146,6 +147,11 @@ def plot_testdataset_result(X_test, y_test):
     predict_result["PREDICTED_MEAN"] = predict_result.mean(axis=1)
     real_value["REAL_MEAN"] = real_value.mean(axis=1)
 
+    # Calculate RMSE
+    predicted = predict_result["PREDICTED_MEAN"]
+    real = real_value["REAL_MEAN"]
+    RMSE = np.sqrt(mean_squared_error(predicted, real))
+
     # Plot the predicted result
     plt.figure(figsize=(16, 8))
     plt.plot(real_value["REAL_MEAN"])
@@ -153,15 +159,11 @@ def plot_testdataset_result(X_test, y_test):
     plt.xlabel("DATE")
     plt.ylabel("Real Value")
     plt.legend(("Real Value", "Predicted Value"), loc="upper left", fontsize=16)
-    plt.title(TrainCaseName + " : result of Training", fontsize=20)
+    plt.title(TrainCaseName + " GRU : result of Training, RMSE=" + str(RMSE), fontsize=16)
     plt.tight_layout()
     plt.show()
-    plt.savefig('./PICS/'+TrainCaseName + '_testdataset.png')
+    plt.savefig('./PICS/'+TrainCaseName + '_GRU_testdataset.png')
 
-    # Calculate RMSE
-    predicted = predict_result["PREDICTED_MEAN"]
-    real = real_value["REAL_MEAN"]
-    RMSE = np.sqrt(mean_squared_error(predicted, real))
     print('-- Test RMSE -- ', RMSE)
     return RMSE
 
