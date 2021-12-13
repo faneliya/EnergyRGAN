@@ -76,11 +76,12 @@ def basic_lstm(input_dim, feature_size):
 
     pyplot.plot(history.history['loss'], label='train')
     pyplot.plot(history.history['val_loss'], label='validation')
-    pyplot.title(TrainCaseName + " LSTM : loss/val_loss", fontsize=20)
+    pyplot.title(TrainCaseName + " LSTM : loss/val_loss", fontsize=16)
     pyplot.legend()
     pyplot.tight_layout()
-    pyplot.show()
     pyplot.savefig('./PICS/'+TrainCaseName + '_LSTM_lossResult.png')
+    pyplot.show()
+
 
     return model
 ####

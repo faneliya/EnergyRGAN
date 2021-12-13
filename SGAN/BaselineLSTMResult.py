@@ -109,8 +109,9 @@ def plot_traindataset_result(X_train, y_train):
     plt.legend(("Real Value", "Predicted Value"), loc="upper left", fontsize=16)
     plt.title(TrainCaseName + " LSTM : result of traindataset, RMSE=" + str(RMSE), fontsize=20)
     plt.tight_layout()
-    plt.show()
     plt.savefig('./PICS/'+TrainCaseName + 'LSTM_traindataset.png')
+    plt.show()
+
 
     print('-- Train RMSE -- ', RMSE)
 
@@ -158,8 +159,9 @@ def plot_testdataset_result(X_test, y_test):
     plt.legend(("Real Value", "Predicted Value"), loc="upper left", fontsize=16)
     plt.title(TrainCaseName + " LSTM : result of testdataset, RMSE=" + str(RMSE), fontsize=16)
     plt.tight_layout()
-    plt.show()
     plt.savefig('./PICS/'+TrainCaseName + 'LSTM_testdataset.png')
+    plt.show()
+
 
     print('-- Test RMSE -- ', RMSE)
     return RMSE

@@ -32,7 +32,7 @@ ModelFileDir="./ModelSaves/"
 #TrainCaseName = 'WindAllDataM3FFT'
 #TrainCaseName = 'WindAllDataM3FFT_DWT'
 #TrainCaseName = 'BelgiumAllDataM3FFT'
-TrainCaseName = 'BelgiumAllDataM3FFT_DWT'
+TrainCaseName = 'BelgumAllDataM3FFT_DWT'
 
 if TrainCaseName is not None:
     #Train Data 8 objects
@@ -109,8 +109,9 @@ def plot_traindataset_result(X_train, y_train):
     plt.legend(("Real Value", "Predicted Value"), loc="upper left", fontsize=16)
     plt.title(TrainCaseName + " LSTM : result of traindataset, RMSE=" + str(RMSE), fontsize=20)
     plt.tight_layout()
+    plt.savefig('./PICS/'+TrainCaseName + 'LSTM_traindataset.png')
     plt.show()
-    plt.savefig('./PICS/'+TrainCaseName + '_LSTM_traindataset.png')
+
 
     print('-- Train RMSE -- ', RMSE)
 
@@ -156,15 +157,12 @@ def plot_testdataset_result(X_test, y_test):
     plt.xlabel("DATE")
     plt.ylabel("Real Value")
     plt.legend(("Real Value", "Predicted Value"), loc="upper left", fontsize=16)
-    plt.title(TrainCaseName + " LSTM : result of testdataset, RMSE=" + str(RMSE), fontsize=20)
+    plt.title(TrainCaseName + " LSTM : result of testdataset, RMSE=" + str(RMSE), fontsize=16)
     plt.tight_layout()
+    plt.savefig('./PICS/'+TrainCaseName + 'LSTM_testdataset.png')
     plt.show()
-    plt.savefig('./PICS/'+TrainCaseName + '_LSTM_testdataset.png')
 
-    # Calculate RMSE
-    predicted = predict_result["PREDICTED_MEAN"]
-    real = real_value["REAL_MEAN"]
-    RMSE = np.sqrt(mean_squared_error(predicted, real))
+
     print('-- Test RMSE -- ', RMSE)
     return RMSE
 
