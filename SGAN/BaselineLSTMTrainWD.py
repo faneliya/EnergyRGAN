@@ -76,16 +76,18 @@ def basic_lstm(input_dim, feature_size):
 
     pyplot.plot(history.history['loss'], label='train')
     pyplot.plot(history.history['val_loss'], label='validation')
+    pyplot.title(TrainCaseName + " LSTM : loss/val_loss", fontsize=16)
     pyplot.legend()
+    pyplot.tight_layout()
+    pyplot.savefig('./PICS/'+TrainCaseName + '_LSTM_lossResult.png')
     pyplot.show()
+
 
     return model
 ####
 
-
-print('Modeling LSTM ..............>' + TrainCaseName)
 model = basic_lstm(input_dim, feature_size)
-model.save(ModelFileDir + TrainCaseName + '_' + 'LSTM_3to1.h5')
+model.save(ModelFileDir + TrainCaseName + '_' + 'LSTM_Model.h5')
 print(model.summary())
 
 

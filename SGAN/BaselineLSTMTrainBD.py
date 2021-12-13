@@ -31,8 +31,8 @@ ModelFileDir="./ModelSaves/"
 #TrainCaseName = 'SolarAllDataM3FFT_DWT'
 #TrainCaseName = 'WindAllDataM3FFT'
 #TrainCaseName = 'WindAllDataM3FFT_DWT'
-#TrainCaseName = 'BelgiumAllDataM3FFT'
-TrainCaseName = 'BelgumAllDataM3FFT_DWT'
+#TrainCaseName = 'BeligumAllDataM3FFT'
+TrainCaseName = 'BeligumAllDataM3FFT_DWT'
 
 if TrainCaseName is not None:
     #Train Data 8 objects
@@ -67,7 +67,7 @@ output_dim = y_train.shape[1]
 ####
 def basic_lstm(input_dim, feature_size):
     model = Sequential()
-    model.add(Bidirectional(LSTM(units=256), input_shape=(input_dim, feature_size)))
+    model.add(Bidirectional(LSTM(units= 256), input_shape=(input_dim, feature_size)))
     model.add(Dense(128))
     model.add(Dense(units=output_dim))
     model.compile(optimizer=Adam(lr = LR), loss='mse')
@@ -76,17 +76,24 @@ def basic_lstm(input_dim, feature_size):
 
     pyplot.plot(history.history['loss'], label='train')
     pyplot.plot(history.history['val_loss'], label='validation')
-    pyplot.title(TrainCaseName + " LSTM : loss/val_loss", fontsize=20)
+    pyplot.title(TrainCaseName + " LSTM : loss/val_loss", fontsize=16)
     pyplot.legend()
     pyplot.tight_layout()
+    pyplot.savefig('./PICS/'+TrainCaseName + '_LSTM_lossResult.png')
     pyplot.show()
-    pyplot.savefig('./PICS/'+TrainCaseName + '_lossResult.png')
+
 
     return model
 ####
 
-
-print('Modeling LSTM ..............>' + TrainCaseName)
 model = basic_lstm(input_dim, feature_size)
-model.save(ModelFileDir + TrainCaseName + '_' + 'LSTM_3to1.h5')
+model.save(ModelFileDir + TrainCaseName + '_' + 'LSTM_Model.h5')
 print(model.summary())
+
+
+
+
+
+
+
+
