@@ -248,11 +248,11 @@ if __name__ == '__main__':
     #dataProcess("Solar")
     #dataProcess("Wind")
     #dataProcessByFile("BelgiumAllDataFFT.csv")
-    #dataProcessByFile("SolarAllDataM3FFT.csv")
-    #dataProcessByFile("SolarAllDataM3FFT_DWT.csv")
-    #dataProcessByFile("WindAllDataM3FFT.csv")
-    #dataProcessByFile("WindAllDataM3FFT_DWT.csv")
 
+    dataProcessByFile("SolarAllDataM3FFT.csv")
+    dataProcessByFile("SolarAllDataM3FFT_DWT.csv")
+    dataProcessByFile("WindAllDataM3FFT.csv")
+    dataProcessByFile("WindAllDataM3FFT_DWT.csv")
     dataProcessByFile("BelgiumAllDataM3FFT.csv")
     dataProcessByFile("BelgiumAllDataM3FFT_DWT.csv")
 '''
