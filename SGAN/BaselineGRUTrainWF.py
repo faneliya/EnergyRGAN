@@ -91,7 +91,7 @@ def basic_GRU(input_dim, output_dim, feature_size) -> tf.keras.models.Model:
     pyplot.title(TrainCaseName + " GRU : loss/val_loss", fontsize=16)
     pyplot.legend()
     pyplot.tight_layout()
-    pyplot.savefig('./PICS/'+TrainCaseName + '_GRM_lossResult.png')
+    pyplot.savefig('./PICS/'+TrainCaseName + '_GRU_lossResult.png')
     pyplot.show()
 
 

@@ -30,7 +30,7 @@ ModelFileDir="./ModelSaves/"
 #TrainCaseName = 'WindAllDataM3FFT'
 #TrainCaseName = 'WindAllDataM3FFT_DWT'
 
-TrainCaseName = 'BeligumAllDataM3FFT'
+TrainCaseName = 'BelgiumAllDataM3FFT'
 #TrainCaseName = 'BelgiumAllDataM3FFT_DWT'
 
 # Parameters
