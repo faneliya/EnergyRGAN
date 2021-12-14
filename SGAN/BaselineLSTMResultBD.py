@@ -32,7 +32,7 @@ ModelFileDir="./ModelSaves/"
 #TrainCaseName = 'WindAllDataM3FFT'
 #TrainCaseName = 'WindAllDataM3FFT_DWT'
 #TrainCaseName = 'BelgiumAllDataM3FFT'
-TrainCaseName = 'BelgumAllDataM3FFT_DWT'
+TrainCaseName = 'BelgiumAllDataM3FFT_DWT'
 
 if TrainCaseName is not None:
     #Train Data 8 objects

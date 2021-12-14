@@ -31,7 +31,7 @@ ModelFileDir="./ModelSaves/"
 #TrainCaseName = 'SolarAllDataM3FFT_DWT'
 #TrainCaseName = 'WindAllDataM3FFT'
 #TrainCaseName = 'WindAllDataM3FFT_DWT'
-TrainCaseName = 'BeligumAllDataM3FFT'
+TrainCaseName = 'BelgiumAllDataM3FFT'
 #TrainCaseName = 'BeligumAllDataM3FFT_DWT'
 
 if TrainCaseName is not None:

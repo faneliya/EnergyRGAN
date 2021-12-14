@@ -265,9 +265,9 @@ if __name__ == '__main__':
     PredictedValue, RealValue, RMSPE = gan.train(X_train, y_train, yc_train, opt)
     ###############################################################################
 
-    #GanModel = tf.keras.models.load_model(ModelFileDir + TrainCaseName + '_' + 'GanGeneratorModel.h5')
-    #print(GanModel.summary())
+    GanModel = tf.keras.models.load_model(ModelFileDir + TrainCaseName + '_' + 'GanGeneratorModel.h5')
+    print(GanModel.summary())
     print("PREDICT PROCESSING......" + TrainCaseName)
-    #PredictedValue = GanModel.predict(X_train, verbose=0)
+    PredictedValue = GanModel.predict(X_train, verbose=0)
     plot_traindataset_result(y_train, PredictedValue)
     #################### Prediction Model #########################################
