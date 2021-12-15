@@ -24,16 +24,18 @@ TrainCaseName = 'SolarAllDataM3FFT'
 #TrainCaseName = 'BeligumAllDataM3FFT'
 #TrainCaseName = 'BeligumAllDataM3FFT_DWT'
 
+DataVersion = 'simple_'
+
 if TrainCaseName is not None:
     #Train Data 8 objects
-    X_train     = np.load(ProcessedFilesDir + TrainCaseName + "_" + "X_train.npy", allow_pickle=True)
-    y_train     = np.load(ProcessedFilesDir + TrainCaseName + "_" + "y_train.npy", allow_pickle=True)
-    X_test      = np.load(ProcessedFilesDir + TrainCaseName + "_" + "X_test.npy", allow_pickle=True)
-    y_test      = np.load(ProcessedFilesDir + TrainCaseName + "_" + "y_test.npy", allow_pickle=True)
-    yc_train    = np.load(ProcessedFilesDir + TrainCaseName + "_" + "yc_train.npy", allow_pickle=True)
-    yc_test     = np.load(ProcessedFilesDir + TrainCaseName + "_" + "yc_test.npy", allow_pickle=True)
-    yScaler     = ProcessedFilesDir + TrainCaseName + "_" + "TargetValueScaler.pkl"
-    xScaler     = ProcessedFilesDir + TrainCaseName + "_" + "BaseValueScaler.pkl"
+    X_train     = np.load(ProcessedFilesDir + TrainCaseName + "_" + DataVersion + "X_train.npy", allow_pickle=True)
+    y_train     = np.load(ProcessedFilesDir + TrainCaseName + "_" + DataVersion + "y_train.npy", allow_pickle=True)
+    X_test      = np.load(ProcessedFilesDir + TrainCaseName + "_" + DataVersion + "X_test.npy", allow_pickle=True)
+    y_test      = np.load(ProcessedFilesDir + TrainCaseName + "_" + DataVersion + "y_test.npy", allow_pickle=True)
+    yc_train    = np.load(ProcessedFilesDir + TrainCaseName + "_" + DataVersion + "yc_train.npy", allow_pickle=True)
+    yc_test     = np.load(ProcessedFilesDir + TrainCaseName + "_" + DataVersion + "yc_test.npy", allow_pickle=True)
+    yScaler     = ProcessedFilesDir + TrainCaseName + "_" + DataVersion + "TargetValueScaler.pkl"
+    xScaler     = ProcessedFilesDir + TrainCaseName + "_" + DataVersion + "BaseValueScaler.pkl"
 else:
     X_train = np.load("X_train.npy", allow_pickle=True)
     y_train = np.load("y_train.npy", allow_pickle=True)
@@ -63,8 +65,10 @@ def make_generator_model(input_dim, output_dim, feature_size) -> tf.keras.models
 
 def make_discriminator_model():
     cnn_net = tf.keras.Sequential()
-    #cnn_net.add(Conv1D(32, input_shape=(4, 1), kernel_size=3, strides=2, padding='same', activation=LeakyReLU(alpha=0.01)))
-    cnn_net.add(Conv1D(32, input_shape=(248, 1), kernel_size=3, strides=2, padding='same', activation=LeakyReLU(alpha=0.01)))
+    if DataFilesDir is not None:
+        cnn_net.add(Conv1D(32, input_shape=(14, 1), kernel_size=3, strides=2, padding='same', activation=LeakyReLU(alpha=0.01)))
+    else:
+        cnn_net.add(Conv1D(32, input_shape=(248, 1), kernel_size=3, strides=2, padding='same', activation=LeakyReLU(alpha=0.01)))
     cnn_net.add(Conv1D(64, kernel_size=5, strides=2, padding='same', activation=LeakyReLU(alpha=0.01)))
     cnn_net.add(Conv1D(128, kernel_size=5, strides=2, padding='same', activation=LeakyReLU(alpha=0.01)))
     cnn_net.add(Flatten())
@@ -85,7 +89,7 @@ class GAN:
         self.generator_optimizer = tf.keras.optimizers.Adam(lr=self.lr)
         self.discriminator_optimizer = tf.keras.optimizers.Adam(lr=self.lr)
         self.batch_size = self.opt['bs']
-        self.checkpoint_dir = '../training_checkpoints'
+        self.checkpoint_dir = './training_checkpoints' + TrainCaseName + "_" + DataVersion + 'GAN'
         self.checkpoint_prefix = os.path.join(self.checkpoint_dir, "ckpt")
         self.checkpoint = tf.train.Checkpoint(generator_optimizer=self.generator_optimizer,
                                               discriminator_optimizer=self.discriminator_optimizer,
@@ -155,7 +159,7 @@ class GAN:
 
             # Save the model every 15 epochs
             if (epoch + 1) % 15 == 0:
-                tf.keras.models.save_model(generator, 'gen_model_3_1_%d.h5' % epoch)
+                # tf.keras.models.save_model(generator, 'gen_model_3_1_%d.h5' % epoch)
                 self.checkpoint.save(file_prefix=self.checkpoint_prefix + f'-{epoch}')
                 print('epoch', epoch + 1, 'd_loss', loss['d_loss'].numpy(), 'g_loss', loss['g_loss'].numpy())
             # print('Time for epoch {} is {} sec'.format(epoch + 1, time.time() - start))
@@ -167,6 +171,7 @@ class GAN:
             train_hist['per_epoch_times'].append(per_epoch_ptime)
 
         ###########################################################################
+        print("#GAN SAVING MODEL....")
         tf.keras.models.save_model(generator, ModelFileDir + TrainCaseName + '_' + 'GanGeneratorModel.h5')
         ##########################################################################
 
@@ -180,62 +185,13 @@ class GAN:
         plt.plot(train_hist['G_losses'], label='G_loss')
         plt.xlabel('Epoch')
         plt.ylabel('Loss')
+        plt.title(TrainCaseName + " : GAN result of Loss(Generator/Discriminator)")
+        plt.tight_layout()
         plt.legend()
+        plt.savefig('./PICS/' + TrainCaseName + '_GAN_Loss.png')
         plt.show()
 
         return PredictedValue, RealValue, np.sqrt(mean_squared_error(RealValue, PredictedValue)) / np.mean(RealValue)
-
-
-## TRAIN DATA
-def plot_traindataset_result(RealValue, PredictedValue):
-    # Rescale back the real dataset
-    X_scaler = load(open(xScaler, 'rb'))
-    y_scaler = load(open(yScaler, 'rb'))
-    train_predict_index = np.load(ProcessedFilesDir + TrainCaseName + "_"
-                                  + "train_predict_index.npy",  allow_pickle=True)
-    test_predict_index = np.load(ProcessedFilesDir + TrainCaseName + "_"
-                                 + "test_predict_index.npy", allow_pickle=True)
-    # dataset_train = pd.read_csv('dataset_train.csv', index_col=0)
-
-    rescaled_RealValue = y_scaler.inverse_transform(RealValue)
-    rescaled_PredictedValue = y_scaler.inverse_transform(PredictedValue)
-
-    print("----- rescaled predicted price -----", rescaled_PredictedValue)
-    print("----- SHAPE rescaled predicted price -----", rescaled_PredictedValue.shape)
-
-    predict_result = pd.DataFrame()
-    for i in range(rescaled_PredictedValue.shape[0]):
-        y_predict = pd.DataFrame(rescaled_PredictedValue[i], columns=["PREDICTED_VALUE"],
-                                 index=train_predict_index[i:i + output_dim])
-        predict_result = pd.concat([predict_result, y_predict], axis=1, sort=False)
-    #
-    real_value = pd.DataFrame()
-    for i in range(rescaled_RealValue.shape[0]):
-        y_train = pd.DataFrame(rescaled_RealValue[i], columns=["REAL_VALUE"],
-                               index=train_predict_index[i:i + output_dim])
-        real_value = pd.concat([real_value, y_train], axis=1, sort=False)
-
-    predict_result['PREDICTED_MEAN'] = predict_result.mean(axis=1)
-    real_value['REAM_MEAN'] = real_value.mean(axis=1)
-
-    # Calculate RMSE
-    predicted = predict_result["PREDICTED_MEAN"]
-    real = real_value["REAM_MEAN"]
-    RMSE = np.sqrt(mean_squared_error(predicted, real))
-
-    # Plot the predicted result
-    plt.figure(figsize=(16, 8))
-    plt.plot(real_value["REAM_MEAN"])
-    plt.plot(predict_result["PREDICTED_MEAN"], color='r')
-    plt.xlabel("DATE")
-    plt.ylabel("Real Value")
-    plt.legend(("Real Value", "Predicted Value"), loc="upper left", fontsize=16)
-    plt.title(TrainCaseName + " : GAN result of Training, RMSE=" + str(RMSE), fontsize=16)
-    plt.tight_layout()
-    plt.savefig('./PICS/'+TrainCaseName + '_GAN_testdataset.png')
-    plt.show()
-
-    print('-- Train RMSE -- ', RMSE)
 
 
 if __name__ == '__main__':
@@ -265,9 +221,3 @@ if __name__ == '__main__':
     PredictedValue, RealValue, RMSPE = gan.train(X_train, y_train, yc_train, opt)
     ###############################################################################
 
-    #GanModel = tf.keras.models.load_model(ModelFileDir + TrainCaseName + '_' + 'GanGeneratorModel.h5')
-    #print(GanModel.summary())
-    print("PREDICT PROCESSING......" + TrainCaseName)
-    #PredictedValue = GanModel.predict(X_train, verbose=0)
-    plot_traindataset_result(y_train, PredictedValue)
-    #################### Prediction Model #########################################

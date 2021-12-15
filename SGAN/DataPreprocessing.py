@@ -13,8 +13,15 @@ from pickle import dump
 
 DataFilesDir="./DataFiles/"
 ProcessedFilesDir="./ProcessedFiles/"
-STD_BASE_TIME_TIC = 240
-STD_TARGET_TIME_TIC = 8
+
+DataVersion = 'simple_'
+
+if DataVersion == 'simple_':
+    STD_BASE_TIME_TIC = 12
+    STD_TARGET_TIME_TIC = 2
+else:
+    STD_BASE_TIME_TIC = 240
+    STD_TARGET_TIME_TIC = 8
 
 
 def dataProcessByFile(fileName):
@@ -59,8 +66,10 @@ def dataProcessByFile(fileName):
     BaseScaleDataset = BaseValueScaler.fit_transform(BaseValue)
     TargetScaleDataset = TargetValueScaler.fit_transform(TargetValue)
 
-    dump(BaseValueScaler, open(ProcessedFilesDir+ fileName[:-4]+'_BaseValueScaler.pkl', 'wb'))
-    dump(TargetValueScaler, open(ProcessedFilesDir+ fileName[:-4]+'_TargetValueScaler.pkl', 'wb'))
+    dump(BaseValueScaler, open(ProcessedFilesDir+ fileName[:-4] + "_"
+                               + DataVersion +'BaseValueScaler.pkl', 'wb'))
+    dump(TargetValueScaler, open(ProcessedFilesDir+ fileName[:-4] + "_"
+                                 + DataVersion +'TargetValueScaler.pkl', 'wb'))
 
     # Reshape the data
     '''Set the data input steps and output steps, 
@@ -94,16 +103,28 @@ def dataProcessByFile(fileName):
     print('index_test shape:', index_test.shape)
 
     fileNamePreFix = fileName[:-4]
-    np.save(ProcessedFilesDir+ fileNamePreFix+"_X_train.npy", X_train)
-    np.save(ProcessedFilesDir+ fileNamePreFix+"_y_train.npy", y_train)
-    np.save(ProcessedFilesDir+ fileNamePreFix+"_X_test.npy", X_test)
-    np.save(ProcessedFilesDir+ fileNamePreFix+"_y_test.npy", y_test)
-    np.save(ProcessedFilesDir+ fileNamePreFix+"_yc_train.npy", yc_train)
-    np.save(ProcessedFilesDir+ fileNamePreFix+"_yc_test.npy", yc_test)
-    np.save(ProcessedFilesDir+ fileNamePreFix+'_index_train.npy', index_train)
-    np.save(ProcessedFilesDir+ fileNamePreFix+'_index_test.npy', index_test)
-    np.save(ProcessedFilesDir+ fileNamePreFix+'_train_predict_index.npy', index_train)
-    np.save(ProcessedFilesDir+ fileNamePreFix+'_test_predict_index.npy', index_test)
+    if DataVersion is not None:
+        np.save(ProcessedFilesDir+ fileNamePreFix + "_" + DataVersion + "X_train.npy", X_train)
+        np.save(ProcessedFilesDir+ fileNamePreFix + "_" + DataVersion + "y_train.npy", y_train)
+        np.save(ProcessedFilesDir+ fileNamePreFix + "_" + DataVersion + "X_test.npy", X_test)
+        np.save(ProcessedFilesDir+ fileNamePreFix + "_" + DataVersion + "y_test.npy", y_test)
+        np.save(ProcessedFilesDir+ fileNamePreFix + "_" + DataVersion + "yc_train.npy", yc_train)
+        np.save(ProcessedFilesDir+ fileNamePreFix + "_" + DataVersion + "yc_test.npy", yc_test)
+        np.save(ProcessedFilesDir+ fileNamePreFix + "_" + DataVersion + 'index_train.npy', index_train)
+        np.save(ProcessedFilesDir+ fileNamePreFix + "_" + DataVersion + 'index_test.npy', index_test)
+        np.save(ProcessedFilesDir+ fileNamePreFix + "_" + DataVersion + 'train_predict_index.npy', index_train)
+        np.save(ProcessedFilesDir+ fileNamePreFix + "_" + DataVersion + 'test_predict_index.npy', index_test)
+    else:
+        np.save(ProcessedFilesDir + fileNamePreFix + "_X_train.npy", X_train)
+        np.save(ProcessedFilesDir + fileNamePreFix + "_y_train.npy", y_train)
+        np.save(ProcessedFilesDir + fileNamePreFix + "_X_test.npy", X_test)
+        np.save(ProcessedFilesDir + fileNamePreFix + "_y_test.npy", y_test)
+        np.save(ProcessedFilesDir + fileNamePreFix + "_yc_train.npy", yc_train)
+        np.save(ProcessedFilesDir + fileNamePreFix + "_yc_test.npy", yc_test)
+        np.save(ProcessedFilesDir + fileNamePreFix + '_index_train.npy', index_train)
+        np.save(ProcessedFilesDir + fileNamePreFix + '_index_test.npy', index_test)
+        np.save(ProcessedFilesDir + fileNamePreFix + '_train_predict_index.npy', index_train)
+        np.save(ProcessedFilesDir + fileNamePreFix + '_test_predict_index.npy', index_test)
 
 
 def dataProcess(filePreFixName):
